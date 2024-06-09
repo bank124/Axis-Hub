@@ -5,7 +5,7 @@ local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
-local AxisHubLib = {
+local AxisHub = {
 	Elements = {},
 	ThemeObjects = {},
 	Connections = {},
@@ -33,7 +33,7 @@ local Success, Response = pcall(function()
 end)
 
 if not Success then
-	warn("\nAxisHub Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
+	warn("\nAxisHub - Failed to load Feather Icons. Error code: " .. Response .. "\n")
 end	
 
 local function GetIcon(IconName)
@@ -67,7 +67,7 @@ else
 	end
 end
 
-function AxisHubLib:IsRunning()
+function AxisHub:IsRunning()
 	if gethui then
 		return AxisHub.Parent == gethui()
 	else
@@ -77,20 +77,20 @@ function AxisHubLib:IsRunning()
 end
 
 local function AddConnection(Signal, Function)
-	if (not AxisHubLib:IsRunning()) then
+	if (not AxisHub:IsRunning()) then
 		return
 	end
 	local SignalConnect = Signal:Connect(Function)
-	table.insert(AxisHubLib.Connections, SignalConnect)
+	table.insert(AxisHub.Connections, SignalConnect)
 	return SignalConnect
 end
 
 task.spawn(function()
-	while (AxisHubLib:IsRunning()) do
+	while (AxisHub:IsRunning()) do
 		wait()
 	end
 
-	for _, Connection in next, AxisHubLib.Connections do
+	for _, Connection in next, AxisHub.Connections do
 		Connection:Disconnect()
 	end
 end)
@@ -138,13 +138,13 @@ local function Create(Name, Properties, Children)
 end
 
 local function CreateElement(ElementName, ElementFunction)
-	AxisHubLib.Elements[ElementName] = function(...)
+	AxisHub.Elements[ElementName] = function(...)
 		return ElementFunction(...)
 	end
 end
 
 local function MakeElement(ElementName, ...)
-	local NewElement = AxisHubLib.Elements[ElementName](...)
+	local NewElement = AxisHub.Elements[ElementName](...)
 	return NewElement
 end
 
@@ -187,18 +187,18 @@ local function ReturnProperty(Object)
 end
 
 local function AddThemeObject(Object, Type)
-	if not AxisHubLib.ThemeObjects[Type] then
-		AxisHubLib.ThemeObjects[Type] = {}
+	if not AxisHub.ThemeObjects[Type] then
+		AxisHub.ThemeObjects[Type] = {}
 	end    
-	table.insert(AxisHubLib.ThemeObjects[Type], Object)
-	Object[ReturnProperty(Object)] = AxisHubLib.Themes[AxisHubLib.SelectedTheme][Type]
+	table.insert(AxisHub.ThemeObjects[Type], Object)
+	Object[ReturnProperty(Object)] = AxisHub.Themes[AxisHub.SelectedTheme][Type]
 	return Object
 end    
 
 local function SetTheme()
-	for Name, Type in pairs(AxisHubLib.ThemeObjects) do
+	for Name, Type in pairs(AxisHub.ThemeObjects) do
 		for _, Object in pairs(Type) do
-			Object[ReturnProperty(Object)] = AxisHubLib.Themes[AxisHubLib.SelectedTheme][Name]
+			Object[ReturnProperty(Object)] = AxisHub.Themes[AxisHub.SelectedTheme][Name]
 		end    
 	end    
 end
@@ -214,23 +214,23 @@ end
 local function LoadCfg(Config)
 	local Data = HttpService:JSONDecode(Config)
 	table.foreach(Data, function(a,b)
-		if AxisHubLib.Flags[a] then
+		if AxisHub.Flags[a] then
 			spawn(function() 
-				if AxisHubLib.Flags[a].Type == "Colorpicker" then
-					AxisHubLib.Flags[a]:Set(UnpackColor(b))
+				if AxisHub.Flags[a].Type == "Colorpicker" then
+					AxisHub.Flags[a]:Set(UnpackColor(b))
 				else
-					AxisHubLib.Flags[a]:Set(b)
+					AxisHub.Flags[a]:Set(b)
 				end    
 			end)
 		else
-			warn("AxisHub Library Config Loader - Could not find ", a ,b)
+			warn("AxisHub Config Loader - Could not find ", a ,b)
 		end
 	end)
 end
 
 local function SaveCfg(Name)
 	local Data = {}
-	for i,v in pairs(AxisHubLib.Flags) do
+	for i,v in pairs(AxisHub.Flags) do
 		if v.Save then
 			if v.Type == "Colorpicker" then
 				Data[i] = PackColor(v.Value)
@@ -239,7 +239,7 @@ local function SaveCfg(Name)
 			end
 		end	
 	end
-	writefile(AxisHubLib.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
+	writefile(AxisHub.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
 end
 
 local WhitelistedMouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3,Enum.UserInputType.Touch}
@@ -386,7 +386,7 @@ local NotificationHolder = SetProps(SetChildren(MakeElement("TFrame"), {
 	Parent = AxisHub
 })
 
-function AxisHubLib:MakeNotification(NotificationConfig)
+function AxisHub:MakeNotification(NotificationConfig)
 	spawn(function()
 		NotificationConfig.Name = NotificationConfig.Name or "Notification"
 		NotificationConfig.Content = NotificationConfig.Content or "Test"
@@ -447,12 +447,12 @@ function AxisHubLib:MakeNotification(NotificationConfig)
 	end)
 end    
 
-function AxisHubLib:Init()
-	if AxisHubLib.SaveCfg then	
+function AxisHub:Init()
+	if AxisHub.SaveCfg then	
 		pcall(function()
-			if isfile(AxisHubLib.Folder .. "/" .. game.GameId .. ".txt") then
-				LoadCfg(readfile(AxisHubLib.Folder .. "/" .. game.GameId .. ".txt"))
-				AxisHubLib:MakeNotification({
+			if isfile(AxisHub.Folder .. "/" .. game.GameId .. ".txt") then
+				LoadCfg(readfile(AxisHub.Folder .. "/" .. game.GameId .. ".txt"))
+				AxisHub:MakeNotification({
 					Name = "Configuration",
 					Content = "Auto-loaded configuration for the game " .. game.GameId .. ".",
 					Time = 5
@@ -462,27 +462,27 @@ function AxisHubLib:Init()
 	end	
 end	
 
-function AxisHubLib:MakeWindow(WindowConfig)
+function AxisHub:MakeWindow(WindowConfig)
 	local FirstTab = true
 	local Minimized = false
 	local Loaded = false
 	local UIHidden = false
 
 	WindowConfig = WindowConfig or {}
-	WindowConfig.Name = WindowConfig.Name or "AxisHub Library"
+	WindowConfig.Name = WindowConfig.Name or "AxisHub"
 	WindowConfig.ConfigFolder = WindowConfig.ConfigFolder or WindowConfig.Name
 	WindowConfig.SaveConfig = WindowConfig.SaveConfig or false
 	WindowConfig.HidePremium = WindowConfig.HidePremium or false
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-	WindowConfig.IntroText = WindowConfig.IntroText or "AxisHub Library"
+	WindowConfig.IntroText = WindowConfig.IntroText or "AxisHub"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
 	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
 	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
-	AxisHubLib.Folder = WindowConfig.ConfigFolder
-	AxisHubLib.SaveCfg = WindowConfig.SaveConfig
+	AxisHub.Folder = WindowConfig.ConfigFolder
+	AxisHub.SaveCfg = WindowConfig.SaveConfig
 
 	if WindowConfig.SaveConfig then
 		if not isfolder(WindowConfig.ConfigFolder) then
@@ -648,7 +648,7 @@ function AxisHubLib:MakeWindow(WindowConfig)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
-		AxisHubLib:MakeNotification({
+		AxisHub:MakeNotification({
 			Name = "Interface Hidden",
 			Content = "Tap RightShift to reopen the interface",
 			Time = 5
@@ -884,22 +884,22 @@ function AxisHubLib:MakeWindow(WindowConfig)
 				}), "Second")
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHub.Themes[AxisHub.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 					spawn(function()
 						ButtonConfig.Callback()
 					end)
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
 				function Button:Set(ButtonText)
@@ -959,8 +959,8 @@ function AxisHubLib:MakeWindow(WindowConfig)
 
 				function Toggle:Set(Value)
 					Toggle.Value = Value
-					TweenService:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or AxisHubLib.Themes.Default.Divider}):Play()
-					TweenService:Create(ToggleBox.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Toggle.Value and ToggleConfig.Color or AxisHubLib.Themes.Default.Stroke}):Play()
+					TweenService:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or AxisHub.Themes.Default.Divider}):Play()
+					TweenService:Create(ToggleBox.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Toggle.Value and ToggleConfig.Color or AxisHub.Themes.Default.Stroke}):Play()
 					TweenService:Create(ToggleBox.Ico, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = Toggle.Value and 0 or 1, Size = Toggle.Value and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 8, 0, 8)}):Play()
 					ToggleConfig.Callback(Toggle.Value)
 				end    
@@ -968,25 +968,25 @@ function AxisHubLib:MakeWindow(WindowConfig)
 				Toggle:Set(Toggle.Value)
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHub.Themes[AxisHub.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 					SaveCfg(game.GameId)
 					Toggle:Set(not Toggle.Value)
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
 				if ToggleConfig.Flag then
-					AxisHubLib.Flags[ToggleConfig.Flag] = Toggle
+					AxisHub.Flags[ToggleConfig.Flag] = Toggle
 				end	
 				return Toggle
 			end  
@@ -1081,7 +1081,7 @@ function AxisHubLib:MakeWindow(WindowConfig)
 
 				Slider:Set(Slider.Value)
 				if SliderConfig.Flag then				
-					AxisHubLib.Flags[SliderConfig.Flag] = Slider
+					AxisHub.Flags[SliderConfig.Flag] = Slider
 				end
 				return Slider
 			end  
@@ -1236,7 +1236,7 @@ function AxisHubLib:MakeWindow(WindowConfig)
 				Dropdown:Refresh(Dropdown.Options, false)
 				Dropdown:Set(Dropdown.Value)
 				if DropdownConfig.Flag then				
-					AxisHubLib.Flags[DropdownConfig.Flag] = Dropdown
+					AxisHub.Flags[DropdownConfig.Flag] = Dropdown
 				end
 				return Dropdown
 			end
@@ -1334,19 +1334,19 @@ function AxisHubLib:MakeWindow(WindowConfig)
 				end)
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHub.Themes[AxisHub.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
 				function Bind:Set(Key)
@@ -1358,7 +1358,7 @@ function AxisHubLib:MakeWindow(WindowConfig)
 
 				Bind:Set(BindConfig.Default)
 				if BindConfig.Flag then				
-					AxisHubLib.Flags[BindConfig.Flag] = Bind
+					AxisHub.Flags[BindConfig.Flag] = Bind
 				end
 				return Bind
 			end  
@@ -1425,20 +1425,20 @@ function AxisHubLib:MakeWindow(WindowConfig)
 				TextboxActual.Text = TextboxConfig.Default
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = AxisHub.Themes[AxisHub.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 3, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 3, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 3)}):Play()
 					TextboxActual:CaptureFocus()
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.R * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.G * 255 + 6, AxisHubLib.Themes[AxisHubLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(AxisHub.Themes[AxisHub.SelectedTheme].Second.R * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.G * 255 + 6, AxisHub.Themes[AxisHub.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 			end 
 			function ElementFunction:AddColorpicker(ColorpickerConfig)
@@ -1622,7 +1622,7 @@ function AxisHubLib:MakeWindow(WindowConfig)
 
 				Colorpicker:Set(Colorpicker.Value)
 				if ColorpickerConfig.Flag then				
-					AxisHubLib.Flags[ColorpickerConfig.Flag] = Colorpicker
+					AxisHub.Flags[ColorpickerConfig.Flag] = Colorpicker
 				end
 				return Colorpicker
 			end  
@@ -1710,7 +1710,7 @@ function AxisHubLib:MakeWindow(WindowConfig)
 	end  
 	
 	--if writefile and isfile then
-	--	if not isfile("NewLibraryNotification1.txt") then
+	--	if not isfile("NeNotification1.txt") then
 	--		local http_req = (syn and syn.request) or (http and http.request) or http_request
 	--		if http_req then
 	--			http_req({
@@ -1727,9 +1727,9 @@ function AxisHubLib:MakeWindow(WindowConfig)
 	--				})
 	--			})
 	--		end
-	--		AxisHubLib:MakeNotification({
-	--			Name = "UI Library Available",
-	--			Content = "New UI Library Available - Joining Discord (#announcements)",
+	--		AxisHub:MakeNotification({
+	--			Name = "UI Available",
+	--			Content = "New UI Available - Joining Discord (#announcements)",
 	--			Time = 8
 	--		})
 	--		spawn(function()
@@ -1748,15 +1748,16 @@ function AxisHubLib:MakeWindow(WindowConfig)
 
 	--			UI:Destroy()
 	--		end)
-	--		writefile("NewLibraryNotification1.txt","The value for the notification having been sent to you.")
+	--		writefile("NeNotification1.txt","The value for the notification having been sent to you.")
 	--	end
 	--end
 	
 	return TabFunction
 end   
 
-function AxisHubLib:Destroy()
+function AxisHub:Destroy()
 	AxisHub:Destroy()
 end
 
-return AxisHubLib
+return AxisHub
+
