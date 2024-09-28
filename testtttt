@@ -1,21 +1,9 @@
-  local function load_obfuscated()
-        local function reconstruct_code()
-            local chars = {119, 112, 111, 116, 125, 34, 36, 78, 96, 109, 108, 114, 41, 32, 96, 120, 117, 113, 92, 35, 29, 36}
-            local code = ''
-            for _, v in ipairs(chars) do
-                code = code .. string.char(v - math.random(-10, 10)) -- Reverse random modification
-            end
-
-            -- Execute the reconstructed code
-            local func = loadstring(code)
-            if func then
-                return func() -- Call the function
-            else
-                error("Failed to load the obfuscated script.")
-            end
-        end
-        return reconstruct_code()
+local function load_obfuscated()
+    local chars = {112, 114, 105, 110, 116, 40, 34, 72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33, 34, 41, 10, 119, 97, 114, 110, 40, 34, 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 119, 97, 114, 110, 105, 110, 103, 46, 46, 46, 34, 41, 10}
+    local code = ''
+    for _, v in ipairs(chars) do
+        code = code .. string.char(v)
     end
-
-    -- Execute obfuscated code
-    function junk1() return 1 end    return load_obfuscated()
+    return load(code)() -- Load and execute the code
+end
+return load_obfuscated()
