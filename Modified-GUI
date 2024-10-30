@@ -47,7 +47,7 @@ local function GetIcon(IconName)
 end   
 
 local AxisHub = Instance.new("ScreenGui")
-AxisHub.Name = "AxisHub"
+AxisHub.Name = "NAH"
 if syn then
 	syn.protect_gui(AxisHub)
 	AxisHub.Parent = game.CoreGui
@@ -1764,5 +1764,4 @@ function AxisHubLib:Destroy()
 end
 
 return AxisHubLib
-
 
