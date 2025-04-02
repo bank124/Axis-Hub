@@ -48,124 +48,88 @@ end)
 
 
 
+local player = game.Players.LocalPlayer
 
-spawn(function()
-    while task.wait() do
-if _G.Burn then
-repeat
-wait(0.5)
- local args = {
-    [1] = 97,
-    [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-    [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
-    [4] = -0,
-    [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-    [6] = game:GetService("Players")[players].Character.Humanoid,
-    [7] = false,
-    [9] = false,
-    [10] = false
-}
+local function startBurnLoop()
+    spawn(function()
+        while task.wait() do
+            if _G.Burn then
+                repeat
+                    wait(0.5)
+                    local character = player.Character
+                    if character then
+                        local rightArm = character:FindFirstChild("Right Arm")
+                        local torso = character:FindFirstChild("Torso")
+                        local targetPlayer = game:GetService("Players")[players] -- Ensure 'players' is defined
 
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+                        if rightArm and torso and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+                            local args = {
+                                [1] = 97,
+                                [2] = rightArm,
+                                [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
+                                [4] = -0,
+                                [5] = torso:FindFirstChild("voiceline"),
+                                [6] = targetPlayer.Character:FindFirstChild("Humanoid"),
+                                [7] = false,
+                                [9] = false,
+                                [10] = false
+                            }
 
-until not _G.Burn
+                            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+                        end
+                    end
+                until not _G.Burn
+            end
+        end
+    end)
 end
+
+
+player.CharacterAdded:Connect(startBurnLoop)
+if player.Character then
+    startBurnLoop()
 end
-end)
 
 
-spawn(function()
-    while task.wait() do
-if _G.Burn then
-repeat
-wait(0.5)
- local args = {
-    [1] = 96,
-    [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-    [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
-    [4] = -0,
-    [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-    [6] = game:GetService("Players")[players].Character.Humanoid,
-    [7] = false,
-    [9] = false,
-    [10] = false
-}
 
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+local player = game.Players.LocalPlayer
 
-until not _G.Burn
+local function startBuffLoop()
+    spawn(function()
+        while task.wait() do
+            if _G.Buff then
+                repeat
+                    wait(0.5)
+                    local character = player.Character
+                    if character then
+                        local torso = character:FindFirstChild("Torso")
+                        local targetPlayer = game:GetService("Players")[players] 
+
+                        if torso and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+                            local args = {
+                                [1] = CFrame.new(1798.10595703125, 875.0091552734375, -756.9478149414062) * CFrame.Angles(3.1414377689361572, -0.07184621691703796, 1.570127248764038),
+                                [2] = torso,
+                                [3] = targetPlayer.Character:FindFirstChild("Humanoid"),
+                                [4] = CFrame.new(1797.93701171875, 875.272705078125, -755.6904907226562) * CFrame.Angles(2.9672560691833496, 0.7212512493133545, -3.001552104949951),
+                                [5] = CFrame.new(1795.6160888671875, 875.3175659179688, -757.587646484375) * CFrame.Angles(2.5792205333709717, 0.5995398163795471, -2.7618472576141357)
+                            }
+
+                            game:GetService("ReplicatedStorage").Specials.esticker:FireServer(unpack(args))
+                        end
+                    end
+                until not _G.Buff
+            end
+        end
+    end)
 end
+
+
+player.CharacterAdded:Connect(startBuffLoop)
+if player.Character then
+    startBuffLoop()
 end
-end)
-
-spawn(function()
-    while task.wait() do
-if _G.Buff then
-repeat
-wait(0.5)
-local args = {
-    [1] = CFrame.new(1798.10595703125, 875.0091552734375, -756.9478149414062) * CFrame.Angles(3.1414377689361572, -0.07184621691703796, 1.570127248764038),
-    [2] = game:GetService("Players").LocalPlayer.Character.Torso,
-    [3] = game:GetService("Players")[players].Character.Humanoid,
-    [4] = CFrame.new(1797.93701171875, 875.272705078125, -755.6904907226562) * CFrame.Angles(2.9672560691833496, 0.7212512493133545, -3.001552104949951),
-    [5] = CFrame.new(1795.6160888671875, 875.3175659179688, -757.587646484375) * CFrame.Angles(2.5792205333709717, 0.5995398163795471, -2.7618472576141357)
-}
-
-game:GetService("ReplicatedStorage").Specials.esticker:FireServer(unpack(args))
-until not _G.Buff
-end
-end
-end)
-
-spawn(function()
-    while task.wait() do
-if _G.Burn then
-repeat
-wait(0.5)
- local args = {
-    [1] = 96,
-    [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-    [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
-    [4] = 0,
-    [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-    [6] = game:GetService("Players")[players].Character.Humanoid,
-    [7] = false,
-    [9] = false,
-    [10] = false
-}
-
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-
-until not _G.Burn
-end
-end
-end)
 
 
-
-spawn(function()
-    while task.wait() do
-if _G.Burn then
-repeat
-wait(0.5)
- local args = {
-    [1] = 95,
-    [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-    [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
-    [4] = 0,
-    [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-    [6] = game:GetService("Players")[players].Character.Humanoid,
-    [7] = false,
-    [9] = false,
-    [10] = false
-}
-
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-
-until not _G.Burn
-end
-end
-end)
 
 
 spawn(function()
@@ -196,71 +160,102 @@ end)
 
 
 spawn(function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait() 
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+
+    if not hrp then return end 
+
     while task.wait() do
-    if _G.Anchored then
-    game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
-
+        if _G.Anchored ~= hrp.Anchored then
+            hrp.Anchored = _G.Anchored
+        end
     end
-    end
-    end)
-    
+end)
 
     
-spawn(function()
-    while task.wait() do
-   
-    if not _G.Anchored then
-    game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
-    end
-    end
-    end)
     
-    
+local player = game.Players.LocalPlayer
+
+local function startGiveGodLoop()
     spawn(function()
-            while task.wait() do
-                pcall(function()
-    if _G.GiveGod then
-     repeat
-     wait(.1)
-    local args = {
-    [1] = 8,
-    [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-    [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
-    [4] = 1000000000000000000000000000000000000000000000000000000000000000000,
-    [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-    [6] = game:GetService("Players")[players].Character.Humanoid,
-    [7] = false,
-    [9] = false,
-    [10] = false
-}
+        while task.wait() do
+            pcall(function()
+                if _G.GiveGod then
+                    repeat
+                        wait(0.1)
+                        local character = player.Character
+                        if character then
+                            local rightArm = character:FindFirstChild("Right Arm")
+                            local torso = character:FindFirstChild("Torso")
+                            local targetPlayer = game:GetService("Players")[players] 
 
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-    until not _G.GiveGod
-    end
+                            if rightArm and torso and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+                                local args = {
+                                    [1] = 8,
+                                    [2] = rightArm,
+                                    [3] = CFrame.new(1e15, 1e15, 1e15) * CFrame.Angles(1.485, 0.162, -0.527),
+                                    [4] = 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+                                    [5] = torso:FindFirstChild("voiceline"),
+                                    [6] = targetPlayer.Character:FindFirstChild("Humanoid"),
+                                    [7] = false,
+                                    [9] = false,
+                                    [10] = false
+                                }
+                                game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+                            end
+                        end
+                    until not _G.GiveGod
+                end
+            end)
+        end
     end)
-    end
-    end)
+end
+
+player.CharacterAdded:Connect(startGiveGodLoop)
+if player.Character then
+    startGiveGodLoop()
+end
+
     
-    spawn(function()
-            while task.wait() do
-                pcall(function()
-    if _G.God then
-    repeat
-    wait(.1)
-    local args = {
-    [1] = CFrame.new(0, 0, 0) * CFrame.Angles(-0, 0, -0),
-    [2] = math.huge,
-    [3] = game.Players.LocalPlayer.Character.Humanoid,
-    [4] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-    [5] = false
-}
+local player = game.Players.LocalPlayer
 
-game:GetService("ReplicatedStorage").Specials.healevent:FireServer(unpack(args))
-    until not _G.God
-    end
+local function startGodLoop()
+    spawn(function()
+        while task.wait() do
+            pcall(function()
+                if _G.God then
+                    repeat
+                        wait(0.1)
+                        local character = player.Character
+                        if character then
+                            local torso = character:FindFirstChild("Torso")
+                            local humanoid = character:FindFirstChild("Humanoid")
+
+                            if torso and humanoid then
+                                local args = {
+                                    [1] = CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, 0),
+                                    [2] = math.huge,
+                                    [3] = humanoid,
+                                    [4] = torso:FindFirstChild("voiceline"),
+                                    [5] = false
+                                }
+
+                                game:GetService("ReplicatedStorage").Specials.healevent:FireServer(unpack(args))
+                            end
+                        end
+                    until not _G.God
+                end
+            end)
+        end
     end)
-    end
-    end)
+end
+
+player.CharacterAdded:Connect(startGodLoop)
+if player.Character then
+    startGodLoop()
+end
+
     
     
     spawn(function()
@@ -3866,3 +3861,6 @@ end)
         
                   Teleport()
           end)
+
+
+
