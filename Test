@@ -3630,91 +3630,35 @@ page2:Toggle("Buy Roka and Arrow", false, function(t)
     _G.Buy = t
     end)
          
-    page3:Button("Select Player", function()
-        -- Create the GUI
-        local screenGui = Instance.new("ScreenGui")
-        screenGui.Parent = game.Players.LocalPlayer.PlayerGui
+    local players = {}
+
+
+for i, v in pairs(game.Players:GetChildren()) do
+    table.insert(players, v.Name)
+end
+
+
+local Dropdown = page3:Dropdown("Select Players", players, function(selectedPlayer)
+   
+    targetPlayer = game.Players:FindFirstChild(selectedPlayer)
+    if targetPlayer then
+        print("Selected player: " .. selectedPlayer)
+    else
+        print("Player not found")
+    end
+end)
+
+
+page3:Button("Refresh Players", function()
+    Dropdown:Clear()
     
-        -- Create the main frame
-        local mainFrame = Instance.new("Frame")
-        mainFrame.Size = UDim2.new(0.3, 0, 0.5, 0)
-        mainFrame.Position = UDim2.new(0.35, 0, 0.25, 0)
-        mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) 
-        mainFrame.BackgroundTransparency = 0.1
-        mainFrame.BorderSizePixel = 0
-        mainFrame.Parent = screenGui
+    for i, v in pairs(game.Players:GetChildren()) do
+        Dropdown:Add(v.Name)
+    end
+end)
+
     
-        -- Create the title label
-        local titleLabel = Instance.new("TextLabel")
-        titleLabel.Size = UDim2.new(1, 0, 0.1, 0)
-        titleLabel.Position = UDim2.new(0, 0, 0, 0)
-        titleLabel.BackgroundTransparency = 1
-        titleLabel.Text = "Select Player"
-        titleLabel.TextColor3 = Color3.fromRGB(0, 170, 255) 
-        titleLabel.TextSize = 24
-        titleLabel.TextAlignment = Enum.TextAlignment.Center
-        titleLabel.Parent = mainFrame
     
-        -- Create the scrollable list frame
-        local scrollFrame = Instance.new("ScrollingFrame")
-        scrollFrame.Size = UDim2.new(1, 0, 0.8, 0)
-        scrollFrame.Position = UDim2.new(0, 0, 0.1, 0)
-        scrollFrame.BackgroundTransparency = 1
-        scrollFrame.ScrollBarThickness = 10
-        scrollFrame.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
-        scrollFrame.Parent = mainFrame
-    
-        -- Create the layout inside the scroll frame
-        local uiListLayout = Instance.new("UIListLayout")
-        uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        uiListLayout.Padding = UDim.new(0, 10)
-        uiListLayout.Parent = scrollFrame
-    
-        -- Debug: Print the list of players in the game
-        print("Players in the game:")
-        local players = {}
-        for i, v in pairs(game.Players:GetChildren()) do
-            table.insert(players, v.Name)
-            print(v.Name)  -- Debugging line to show player names in output
-        end
-    
-        -- Create buttons for each player
-        if #players > 0 then
-            for _, playerName in ipairs(players) do
-                local playerButton = Instance.new("TextButton")
-                playerButton.Size = UDim2.new(1, -20, 0, 30)
-                playerButton.Text = playerName
-                playerButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)  -- Dark button background
-                playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-                playerButton.TextSize = 18
-                playerButton.TextAlignment = Enum.TextAlignment.Center
-                playerButton.AutoButtonColor = true
-                playerButton.BorderSizePixel = 0
-                playerButton.Parent = scrollFrame
-    
-                playerButton.MouseButton1Click:Connect(function()
-                    -- Destroy the GUI once a player is selected
-                    screenGui:Destroy()
-    
-                    -- Handle selection logic
-                    local selectedPlayer = game.Players:FindFirstChild(playerName)
-                    if selectedPlayer then
-                        print("Selected player: " .. selectedPlayer.Name)
-                    end
-                end)
-            end
-        else
-            -- If no players found, display a message
-            local noPlayersLabel = Instance.new("TextLabel")
-            noPlayersLabel.Size = UDim2.new(1, 0, 0, 30)
-            noPlayersLabel.Text = "No players available."
-            noPlayersLabel.BackgroundTransparency = 1
-            noPlayersLabel.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Red text
-            noPlayersLabel.TextSize = 18
-            noPlayersLabel.TextAlignment = Enum.TextAlignment.Center
-            noPlayersLabel.Parent = scrollFrame
-        end
-    end)
     
     
     
@@ -3922,3 +3866,5 @@ end)
           end)
 
 
+
+       
