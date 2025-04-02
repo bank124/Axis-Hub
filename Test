@@ -3631,31 +3631,34 @@ page2:Toggle("Buy Roka and Arrow", false, function(t)
     end)
          
     local players = {}
-
-
-for i, v in pairs(game.Players:GetChildren()) do
-    table.insert(players, v.Name)
-end
-
-
-local Dropdown = page3:Dropdown("Select Players", players, function(selectedPlayer)
-   
-    targetPlayer = game.Players:FindFirstChild(selectedPlayer)
-    if targetPlayer then
-        print("Selected player: " .. selectedPlayer)
-    else
-        print("Player not found")
-    end
-end)
-
-
-page3:Button("Refresh Players", function()
-    Dropdown:Clear()
-    
     for i, v in pairs(game.Players:GetChildren()) do
-        Dropdown:Add(v.Name)
+        table.insert(players, v.Name)
     end
-end)
+    
+    local targetPlayerName = "" 
+    local targetPlayerObject = nil 
+    
+    local Dropdown = page3:Dropdown("Select Players", players, function(selectedName)
+        targetPlayerName = selectedName
+        targetPlayerObject = game.Players:FindFirstChild(targetPlayerName)
+        if targetPlayerObject then
+            print("Target player selected: " .. targetPlayerObject.Name)
+        else
+            print("Failed to find the selected player.")
+        end
+    end)
+    
+   
+    page3:Button("Refresh Players", function()
+        Dropdown:Clear()
+        players = {}
+        for i, v in pairs(game.Players:GetChildren()) do
+            table.insert(players, v.Name)
+        end
+        for _, playerName in pairs(players) do
+            Dropdown:Add(playerName)
+        end
+    end)
 
     
     
@@ -3676,50 +3679,72 @@ end)
      page3:Toggle("Give God",false,function(t)
      _G.GiveGod = t
      end)
-    page3:Toggle("Spectate Player",false,function(t)
-                Sp = t
-                local plr1 = game.Players.LocalPlayer.Character.Humanoid
-                local plr2 = game.Players:FindFirstChild(players)
-                repeat wait(.1)
-                    game.Workspace.Camera.CameraSubject = plr2.Character.Humanoid
-                until Sp == false 
-                game.Workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
-            end)
-            
-            page3:Button("Teleport To Player", function()
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players:FindFirstChild(players).Character.HumanoidRootPart.CFrame
-            end)
-            
-        page3:Button("kill", function()    
-  local args = {
-        [1] = 1,
-        [2] = game:GetService("Players").LocalPlayer.Character.Head.Container.Stand:FindFirstChild("Right Arm"),
-        [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
-        [4] = 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
-        [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-        [6] = game:GetService("Players")[players].Character.Humanoid,
-        [7] = false,
-        [9] = false,
-        [10] = false
-    }
-    
-    game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+
+   
+
+
+     page3:Toggle("Spectate Player", false, function(t)
+        Sp = t
+        if targetPlayerObject and targetPlayerObject.Character then
+            local plr2 = targetPlayerObject.Character.Humanoid
+            repeat wait(.1)
+                game.Workspace.Camera.CameraSubject = plr2
+            until Sp == false
+            game.Workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+        else
+            print("Target player not found for spectating.")
+        end
     end)
-     page3:Button("bring", function()    
     
-    local args = {
-        [1] = 24,
-        [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-        [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
-        [4] = 0,
-        [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-        [6] = game:GetService("Players")[players].Character.Humanoid,
-        [7] = false,
-        [9] = false,
-        [10] = false
-    }
+    -- Button to teleport to the selected player
+    page3:Button("Teleport To Player", function()
+        if targetPlayerObject and targetPlayerObject.Character then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = targetPlayerObject.Character.HumanoidRootPart.CFrame
+        else
+            print("Target player not found for teleportation.")
+        end
+    end)
     
-    game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+    -- Button to kill the selected player
+    page3:Button("kill", function()
+        if targetPlayerObject and targetPlayerObject.Character then
+            local args = {
+                [1] = 1,
+                [2] = game:GetService("Players").LocalPlayer.Character.Head.Container.Stand:FindFirstChild("Right Arm"),
+                [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
+                [4] = 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+                [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
+                [6] = targetPlayerObject.Character.Humanoid,  -- Corrected to use the target player's humanoid
+                [7] = false,
+                [9] = false,
+                [10] = false
+            }
+    
+            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+        else
+            print("Target player not found for kill action.")
+        end
+    end)
+    
+    -- Button to bring the selected player
+    page3:Button("bring", function()
+        if targetPlayerObject and targetPlayerObject.Character then
+            local args = {
+                [1] = 24,
+                [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
+                [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
+                [4] = 0,
+                [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
+                [6] = targetPlayerObject.Character.Humanoid,  -- Corrected to use the target player's humanoid
+                [7] = false,
+                [9] = false,
+                [10] = false
+            }
+    
+            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+        else
+            print("Target player not found for bringing action.")
+        end
     end)
     
      page4:Toggle("God Mode", false, function(t)
