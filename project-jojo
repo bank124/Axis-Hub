@@ -162,8 +162,7 @@ if player.Character then
     startGiveGodLoop()
 end
 
--- Example of how to dynamically update the target player (change "YourNewTargetName" to the actual name you want)
-updateTarget(game:GetService("Players").YourNewTargetName)  -- Replace with actual logic to select a target player
+
 
 
 
@@ -3908,5 +3907,3 @@ end)
           end)
 
 
-
-          
