@@ -46,32 +46,34 @@ end)
 
 
 local player = game.Players.LocalPlayer
-local targetPlayer -- This will hold the reference to the selected target
+local targetPlayerObject = nil -- This will hold the reference to the selected target player object
 
--- Function to update targetPlayer
+-- Function to update targetPlayerObject when a new player is selected
 local function updateTarget(newTarget)
-    targetPlayer = newTarget
+    targetPlayerObject = newTarget
+    print("Target player selected: " .. (targetPlayerObject and targetPlayerObject.Name or "None"))
 end
 
+-- Function to start the burn loop
 local function startBurnLoop()
     spawn(function()
         while task.wait() do
-            if _G.Burn then
+            if _G.Burn and targetPlayerObject then
                 repeat
                     wait(0.5)
                     local character = player.Character
                     if character then
                         local rightArm = character:FindFirstChild("Right Arm")
                         local torso = character:FindFirstChild("Torso")
-                        -- Ensure that targetPlayer is properly set
-                        if rightArm and torso and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+                        -- Ensure that targetPlayerObject is properly set
+                        if rightArm and torso and targetPlayerObject.Character and targetPlayerObject.Character:FindFirstChild("Humanoid") then
                             local args = {
                                 [1] = 97,
                                 [2] = rightArm,
                                 [3] = CFrame.new(1000000000000000, 1000000000000000, 1000000000000000) * CFrame.Angles(1.485051155090332, 0.16273963451385498, -0.5274947285652161),
                                 [4] = -0,
                                 [5] = torso:FindFirstChild("voiceline"),
-                                [6] = targetPlayer.Character:FindFirstChild("Humanoid"),
+                                [6] = targetPlayerObject.Character:FindFirstChild("Humanoid"),
                                 [7] = false,
                                 [9] = false,
                                 [10] = false
@@ -86,21 +88,22 @@ local function startBurnLoop()
     end)
 end
 
+-- Function to start the buff loop
 local function startBuffLoop()
     spawn(function()
         while task.wait() do
-            if _G.Buff then
+            if _G.Buff and targetPlayerObject then
                 repeat
                     wait(0.5)
                     local character = player.Character
                     if character then
                         local torso = character:FindFirstChild("Torso")
-                        -- Ensure that targetPlayer is properly set
-                        if torso and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+                        -- Ensure that targetPlayerObject is properly set
+                        if torso and targetPlayerObject.Character and targetPlayerObject.Character:FindFirstChild("Humanoid") then
                             local args = {
                                 [1] = CFrame.new(1798.10595703125, 875.0091552734375, -756.9478149414062) * CFrame.Angles(3.1414377689361572, -0.07184621691703796, 1.570127248764038),
                                 [2] = torso,
-                                [3] = targetPlayer.Character:FindFirstChild("Humanoid"),
+                                [3] = targetPlayerObject.Character:FindFirstChild("Humanoid"),
                                 [4] = CFrame.new(1797.93701171875, 875.272705078125, -755.6904907226562) * CFrame.Angles(2.9672560691833496, 0.7212512493133545, -3.001552104949951),
                                 [5] = CFrame.new(1795.6160888671875, 875.3175659179688, -757.587646484375) * CFrame.Angles(2.5792205333709717, 0.5995398163795471, -2.7618472576141357)
                             }
@@ -114,26 +117,27 @@ local function startBuffLoop()
     end)
 end
 
+-- Function to start the give god loop
 local function startGiveGodLoop()
     spawn(function()
         while task.wait() do
             pcall(function()
-                if _G.GiveGod then
+                if _G.GiveGod and targetPlayerObject then
                     repeat
                         wait(0.1)
                         local character = player.Character
                         if character then
                             local rightArm = character:FindFirstChild("Right Arm")
                             local torso = character:FindFirstChild("Torso")
-                            -- Ensure that targetPlayer is properly set
-                            if rightArm and torso and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+                            -- Ensure that targetPlayerObject is properly set
+                            if rightArm and torso and targetPlayerObject.Character and targetPlayerObject.Character:FindFirstChild("Humanoid") then
                                 local args = {
                                     [1] = 8,
                                     [2] = rightArm,
                                     [3] = CFrame.new(1e15, 1e15, 1e15) * CFrame.Angles(1.485, 0.162, -0.527),
                                     [4] = 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
                                     [5] = torso:FindFirstChild("voiceline"),
-                                    [6] = targetPlayer.Character:FindFirstChild("Humanoid"),
+                                    [6] = targetPlayerObject.Character:FindFirstChild("Humanoid"),
                                     [7] = false,
                                     [9] = false,
                                     [10] = false
@@ -493,7 +497,7 @@ end)
                     if _G.Dio then
                     repeat
     local args = {
-        [1] = 0,
+        [1] = 55,
         [2] = game:GetService("Players").LocalPlayer.Character["Right Arm"],
         [3] = CFrame.new(0,0,0),
         [4] = 99999999999,
@@ -527,7 +531,7 @@ end)
                     if _G.Diavolo then
                     repeat
     local args = {
-        [1] = 0,
+        [1] = 55,
         [2] = game:GetService("Players").LocalPlayer.Character["Right Arm"],
         [3] = CFrame.new(0,0,0),
         [4] = 99999999999,
@@ -655,7 +659,7 @@ end)
                     if _G.Kira then
                     repeat
     local args = {
-        [1] = 0,
+        [1] = 55,
         [2] = game:GetService("Players").LocalPlayer.Character["Right Arm"],
         [3] = CFrame.new(0,0,0),
         [4] = 99999999999,
@@ -3630,77 +3634,38 @@ page2:Toggle("Buy Roka and Arrow", false, function(t)
     _G.Buy = t
     end)
          
-    page3:Button("Select Player", function()
-       
-        local screenGui = Instance.new("ScreenGui")
-        screenGui.Parent = game.Players.LocalPlayer.PlayerGui
-        
-        local mainFrame = Instance.new("Frame")
-        mainFrame.Size = UDim2.new(0.3, 0, 0.5, 0)
-        mainFrame.Position = UDim2.new(0.35, 0, 0.25, 0)
-        mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) 
-        mainFrame.BackgroundTransparency = 0.1
-        mainFrame.BorderSizePixel = 0
-        mainFrame.Parent = screenGui
-        
-      
-        local titleLabel = Instance.new("TextLabel")
-        titleLabel.Size = UDim2.new(1, 0, 0.1, 0)
-        titleLabel.Position = UDim2.new(0, 0, 0, 0)
-        titleLabel.BackgroundTransparency = 1
-        titleLabel.Text = "Select Player"
-        titleLabel.TextColor3 = Color3.fromRGB(0, 170, 255) 
-        titleLabel.TextSize = 24
-        titleLabel.TextAlignment = Enum.TextAlignment.Center
-        titleLabel.Parent = mainFrame
+    local players = {}
+    for i, v in pairs(game.Players:GetChildren()) do
+        table.insert(players, v.Name)
+    end
     
-     
-        local scrollFrame = Instance.new("ScrollingFrame")
-        scrollFrame.Size = UDim2.new(1, 0, 0.8, 0)
-        scrollFrame.Position = UDim2.new(0, 0, 0.1, 0)
-        scrollFrame.BackgroundTransparency = 1
-        scrollFrame.ScrollBarThickness = 10
-        scrollFrame.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
-        scrollFrame.Parent = mainFrame
+    local targetPlayerName = ""  -- This will hold the name of the selected target player
     
-       
-        local uiListLayout = Instance.new("UIListLayout")
-        uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        uiListLayout.Padding = UDim.new(0, 10)
-        uiListLayout.Parent = scrollFrame
+    -- Dropdown logic to select a player
+    local Dropdown = page3:Dropdown("Select Players", players, function(selectedName)
+        targetPlayerName = selectedName
+        targetPlayerObject = game.Players:FindFirstChild(targetPlayerName)
+        if targetPlayerObject then
+            print("Target player selected: " .. targetPlayerObject.Name)
+        else
+            print("Failed to find the selected player.")
+        end
+    end)
     
- 
-        local players = {}
+    page3:Button("Refresh Players", function()
+        Dropdown:Clear()
+        players = {}
         for i, v in pairs(game.Players:GetChildren()) do
             table.insert(players, v.Name)
         end
-        
-        for _, playerName in ipairs(players) do
-            local playerButton = Instance.new("TextButton")
-            playerButton.Size = UDim2.new(1, -20, 0, 30)
-            playerButton.Text = playerName
-            playerButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)  -- Dark button background
-            playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-            playerButton.TextSize = 18
-            playerButton.TextAlignment = Enum.TextAlignment.Center
-            playerButton.AutoButtonColor = true
-            playerButton.BorderSizePixel = 0
-            playerButton.Parent = scrollFrame
-    
-    
-            playerButton.MouseButton1Click:Connect(function()
-              
-                screenGui:Destroy()
-    
-         
-                local selectedPlayer = game.Players:FindFirstChild(playerName)
-                if selectedPlayer then
-                    print("Selected player: " .. selectedPlayer.Name)
-                  
-                end
-            end)
+        for _, playerName in pairs(players) do
+            Dropdown:Add(playerName)
         end
     end)
+
+    
+    
+    
     
     
     
@@ -3717,50 +3682,77 @@ end)
      page3:Toggle("Give God",false,function(t)
      _G.GiveGod = t
      end)
-    page3:Toggle("Spectate Player",false,function(t)
-                Sp = t
-                local plr1 = game.Players.LocalPlayer.Character.Humanoid
-                local plr2 = game.Players:FindFirstChild(players)
-                repeat wait(.1)
-                    game.Workspace.Camera.CameraSubject = plr2.Character.Humanoid
-                until Sp == false 
-                game.Workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
-            end)
-            
-            page3:Button("Teleport To Player", function()
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players:FindFirstChild(players).Character.HumanoidRootPart.CFrame
-            end)
-            
-        page3:Button("kill", function()    
-  local args = {
-        [1] = 1,
-        [2] = game:GetService("Players").LocalPlayer.Character.Head.Container.Stand:FindFirstChild("Right Arm"),
-        [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
-        [4] = 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
-        [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-        [6] = game:GetService("Players")[players].Character.Humanoid,
-        [7] = false,
-        [9] = false,
-        [10] = false
-    }
-    
-    game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+
+   
+
+
+     page3:Toggle("Spectate Player", false, function(t)
+        Sp = t
+        if targetPlayerObject and targetPlayerObject.Character then
+            local plr2 = targetPlayerObject.Character.Humanoid
+            repeat wait(.1)
+                game.Workspace.Camera.CameraSubject = plr2
+            until Sp == false
+            game.Workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+        else
+            print("Target player not found for spectating.")
+        end
     end)
-     page3:Button("bring", function()    
     
-    local args = {
-        [1] = 24,
-        [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
-        [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
-        [4] = 0,
-        [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
-        [6] = game:GetService("Players")[players].Character.Humanoid,
-        [7] = false,
-        [9] = false,
-        [10] = false
-    }
+    -- Button to teleport to the selected player
+    page3:Button("Teleport To Player", function()
+        if targetPlayerObject and targetPlayerObject.Character then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = targetPlayerObject.Character.HumanoidRootPart.CFrame
+        else
+            print("Target player not found for teleportation.")
+        end
+    end)
     
-    game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+    -- Button to kill the selected player
+    page3:Button("kill", function()
+
+
+
+
+        if targetPlayerObject and targetPlayerObject.Character then
+        local args = {
+            [1] = 55,
+            [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
+                [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
+                [4] = 100,
+                [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
+                [6] = targetPlayerObject.Character.Humanoid,  -- Corrected to use the target player's humanoid
+                [7] = false,
+                [9] = false,
+                [10] = false
+            }
+    
+            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+        else
+            print("Target player not found for kill action.")
+        end
+    end)
+    
+  
+
+    page3:Button("bring", function()
+        if targetPlayerObject and targetPlayerObject.Character then
+            local args = {
+                [1] = 24,
+                [2] = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Right Arm"),
+                [3] = CFrame.new(1293.1356201171875, 875.3916625976562, -422.6632080078125) * CFrame.Angles(1.7222100496292114, 0.032435182482004166, 1.8908567428588867),
+                [4] = 0,
+                [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
+                [6] = targetPlayerObject.Character.Humanoid,  -- Corrected to use the target player's humanoid
+                [7] = false,
+                [9] = false,
+                [10] = false
+            }
+    
+            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
+        else
+            print("Target player not found for bringing action.")
+        end
     end)
     
      page4:Toggle("God Mode", false, function(t)
@@ -3908,4 +3900,4 @@ end)
 
 
 
-         
+       
