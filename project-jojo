@@ -1511,7 +1511,7 @@ local args = {
 }
 
 game:GetService("ReplicatedStorage").Logic.arrowevent:InvokeServer(unpack(args))
-wait(1.5)
+wait(1)
 end
 _G.HideStandGui()
 until not _G.AutoRandomStand or game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience"
