@@ -35,7 +35,7 @@ if success and hostStatus then -------------------------------- as you see it ch
 
     if keyMatched then
 
-print("version: 1.0.8")
+print("version: 1.0.4")
 
 
 ---------------------script
@@ -55,6 +55,120 @@ local vu = game:GetService("VirtualUser")
 
    
     setfpscap(999)
+
+
+
+
+    spawn(function()
+        while task.wait() do
+            pcall(function()
+                if _G.ESPNPC then
+                    for i,v in pairs(game.Workspace:GetChildren()) do
+                        if v:IsA("Model") and v.Name == "Caesar" or v.Name == "Gyro" or v.Name == "Zeppeli" then
+                            if v:FindFirstChild("Handle") then
+                                if not v.Handle:FindFirstChild("ESP") then
+                                    local BillboardGui = Instance.new("BillboardGui")
+                                    local TextLabel = Instance.new("TextLabel")
+                                    BillboardGui.Parent = v.Handle
+                                    BillboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+                                    BillboardGui.Active = true
+                                    BillboardGui.Name = "ESP"
+                                    BillboardGui.AlwaysOnTop = true
+                                    BillboardGui.LightInfluence = 1.000
+                                    BillboardGui.Size = UDim2.new(0, 200, 0, 50)
+                                    BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
+    
+                                    TextLabel.Parent = BillboardGui
+                                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                    TextLabel.BackgroundTransparency = 1.000
+                                    TextLabel.Size = UDim2.new(0, 200, 0, 50)
+                                    TextLabel.Font = Enum.Font.GothamBold
+                                    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                                    TextLabel.TextSize = 15
+                                    TextLabel.TextStrokeTransparency = 0.000
+                                    TextLabel.TextWrapped = true
+                                end
+                                local Dis = math.floor((game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Handle.Position).Magnitude)
+                                v.Handle.ESP.TextLabel.Text = v.Name.."\n"..Dis.." m."
+                            end
+                        end
+                    end
+                else
+                    for i,v in pairs(game.Workspace:GetChildren()) do
+                        if v:IsA("Tool") then
+                            if v:FindFirstChild("Handle") then
+                                if v.Handle:FindFirstChild("ESP") then
+                                    v.Handle.ESP:Destroy()
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+
+
+
+
+    spawn(function()
+        while task.wait() do
+            pcall(function()
+                if _G.ESP then
+                    for i,v in pairs(game.Workspace:GetChildren()) do
+                        if v:IsA("Tool") or v.Name == "RequiemArrow" or v.Name == "RokakakaFruit" or v.Name == "AjaMask" or v.Name == "StoneRokakakaFruit" or v.Name == "RedAja" or v.Name == "VampireMask" or v.Name == "Dio's Bone" or v.Name == "Dio's Diary" or v.Name == "Right Eye" or v.Name == "Spine" then
+                            if v:FindFirstChild("Handle") then
+                                if not v.Handle:FindFirstChild("ESP") then
+                                    local BillboardGui = Instance.new("BillboardGui")
+                                    local TextLabel = Instance.new("TextLabel")
+                                    BillboardGui.Parent = v.Handle
+                                    BillboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+                                    BillboardGui.Active = true
+                                    BillboardGui.Name = "ESP"
+                                    BillboardGui.AlwaysOnTop = true
+                                    BillboardGui.LightInfluence = 1.000
+                                    BillboardGui.Size = UDim2.new(0, 200, 0, 50)
+                                    BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
+    
+                                    TextLabel.Parent = BillboardGui
+                                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                    TextLabel.BackgroundTransparency = 1.000
+                                    TextLabel.Size = UDim2.new(0, 200, 0, 50)
+                                    TextLabel.Font = Enum.Font.GothamBold
+                                    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                                    TextLabel.TextSize = 15
+                                    TextLabel.TextStrokeTransparency = 0.000
+                                    TextLabel.TextWrapped = true
+                                end
+                                local Dis = math.floor((game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Handle.Position).Magnitude)
+                                v.Handle.ESP.TextLabel.Text = v.Name.."\n"..Dis.." m."
+                            end
+                        end
+                    end
+                else
+                    for i,v in pairs(game.Workspace:GetChildren()) do
+                        if v:IsA("Tool") then
+                            if v:FindFirstChild("Handle") then
+                                if v.Handle:FindFirstChild("ESP") then
+                                    v.Handle.ESP:Destroy()
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -971,6 +1085,18 @@ local function startBurnLoop()
     end)
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
 player.CharacterAdded:Connect(function()
     startGiveGodLoop()
     startBuffLoop()
@@ -1276,6 +1402,113 @@ local Toggle = Misc:CreateToggle({
     Flag = "Item",
     Callback = function(t)
  _G.Void = t
+ 
+
+end,
+})
+
+
+
+
+
+spawn(function()
+    while task.wait() do
+if _G.AutoRandomStand then
+repeat
+
+    if game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience" then
+      return
+    else
+
+
+
+ wait(0.5)
+
+
+	if not game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") then
+        local args = {
+            [1]="RokakakaFruit",
+            
+            }
+            
+            game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(args))
+	end
+    local roka = game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit")
+		wait(.1)
+		game.Players.LocalPlayer.Character.Humanoid:EquipTool(roka)
+
+local args = {
+    [1] = game:GetService("Players").LocalPlayer.Character.RokakakaFruit,
+    [2] = game:GetService("Players").LocalPlayer.Character,
+    [3] = 2
+}
+
+game:GetService("ReplicatedStorage").Logic.fruitevent:InvokeServer(unpack(args))
+
+wait(1.3)
+
+if not game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
+    local yes = {
+        [1]="StandArrow",
+        
+        }
+        
+        game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(yes))
+end
+
+local arrow = game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow")
+	wait(.1)
+	game.Players.LocalPlayer.Character.Humanoid:EquipTool(arrow)
+
+
+local args = {
+    [1] = game:GetService("Players").LocalPlayer.Character.StandArrow,
+    [2] = game:GetService("Players").LocalPlayer.Character,
+    [3] = 0
+}
+
+game:GetService("ReplicatedStorage").Logic.arrowevent:InvokeServer(unpack(args))
+wait(1.5)
+end
+until not _G.AutoRandomStand or game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience"
+end
+end
+end)
+
+
+
+
+
+local Toggle = Misc:CreateToggle({
+    Name = "Auto Random Stand(Tier 8)",
+    CurrentValue = false,
+    Flag = "Item",
+    Callback = function(t)
+ _G.AutoRandomStand = t
+ 
+
+end,
+})
+
+
+local Toggle = Misc:CreateToggle({
+    Name = "Esp NPC",
+    CurrentValue = false,
+    Flag = "Item",
+    Callback = function(t)
+ _G.ESPNPC = t
+ 
+
+end,
+})
+
+
+local Toggle = Misc:CreateToggle({
+    Name = "Esp Item",
+    CurrentValue = false,
+    Flag = "Item",
+    Callback = function(t)
+ _G.ESP = t
  
 
 end,
