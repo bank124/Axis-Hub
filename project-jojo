@@ -261,6 +261,10 @@ local vu = game:GetService("VirtualUser")
                         if _G.AutoStoneRokakaka then
                             foundTool = CollectTool("StoneRokakakaFruit") or foundTool
                         end
+
+                        if _G.AutoRebirthDiary then
+                            foundTool = CollectTool("Rebirth Diary") or foundTool
+                        end
     
                         if _G.AutoStandArrow then
                             foundTool = CollectTool("StandArrow") or foundTool
@@ -492,6 +496,7 @@ local Window = Rayfield:CreateWindow({
  })
 
  local Main = Window:CreateTab("Main", 4370033185) 
+ local Stand = Window:CreateTab("Auto Random Stand", 4370033185)
  local Item = Window:CreateTab("Item Collect", 4370033185) 
  local Player = Window:CreateTab("Player", 4370033185)
  local Shop = Window:CreateTab("Shop", 4370033185)
@@ -671,11 +676,267 @@ if game.PlaceId == 2731332132 then
 
 
 
+   local player = game.Players.LocalPlayer
+   local standValue = player:WaitForChild("Stand")
+   
 
+   local screenGui = Instance.new("ScreenGui")
+   screenGui.Name = "StandDisplay"
+   screenGui.ResetOnSpawn = false
+   screenGui.Parent = player:WaitForChild("PlayerGui")
+   
+ 
+   local textLabel = Instance.new("TextLabel")
+   textLabel.Name = "StandLabel"
+   textLabel.Size = UDim2.new(0, 200, 0, 40)
+   textLabel.Position = UDim2.new(0, 10, 0, 10)
+   textLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+   textLabel.BorderSizePixel = 0
+   textLabel.TextColor3 = Color3.new(1, 1, 1)
+   textLabel.TextScaled = true
+   textLabel.Font = Enum.Font.GothamBold
+   textLabel.Text = "Stand: " .. tostring(standValue.Value)
+   textLabel.Visible = false
+   textLabel.BackgroundTransparency = 1
+   textLabel.TextTransparency = 1
+   textLabel.Parent = screenGui
+   
 
+   standValue:GetPropertyChangedSignal("Value"):Connect(function()
+       textLabel.Text = "Stand: " .. tostring(standValue.Value)
+   end)
+   
+   
+   _G.ShowStandGui = function()
+       textLabel.Visible = true
+       textLabel.BackgroundTransparency = 0
+       textLabel.TextTransparency = 0
+   end
+   
+   
+   _G.HideStandGui = function()
+       textLabel.Visible = false
+       textLabel.BackgroundTransparency = 1
+       textLabel.TextTransparency = 1
+   end
+   
+   
+   
+   local player = game.Players.LocalPlayer
+   local replicated = game:GetService("ReplicatedStorage")
+   local logic = replicated:WaitForChild("Logic")
+   
 
+   local selectedStands = {}
+   
 
+   local function hasTargetStand()
+       for _, name in ipairs(selectedStands) do
+           if player.Stand.Value == name then
+               return true
+           end
+       end
+       return false
+   end
+   
+   local function hasItem(itemName)
+       if player.Backpack:FindFirstChild(itemName) then return true end
+       if player.Character and player.Character:FindFirstChild(itemName) then return true end
+       return false
+   end
+   
+   local function isCharacterAlive()
+       return player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0
+   end
+   
+  
+   local StandsFolder = replicated:WaitForChild("Stands")
+   
+   local function getStandNames()
+       local standNames = {}
+       for _, stand in pairs(StandsFolder:GetChildren()) do
+           if stand:IsA("LocalScript") then
+               table.insert(standNames, stand.Name)
+           end
+       end
+       return standNames
+   end
+   
+   local standNames = getStandNames()
+   
+   local GG = Stand:CreateDropdown({
+       Name = "Select Stand",
+       Options = standNames,
+       CurrentOption = {standNames[1]},
+       MultipleOptions = true,
+       Flag = "StandDropdown",
+       Callback = function(options)
+           selectedStands = options
+           print("Selected Stands: " .. table.concat(selectedStands, ", "))
+       end,
+   })
+   
+   local Toggle = Stand:CreateToggle({
+       Name = "Auto Random Selected Stand",
+       CurrentValue = false,
+       Flag = "Item",
+       Callback = function(t)
+           _G.AutoRandomStand = t
+       end,
+   })
+   
 
+   spawn(function()
+       while task.wait(0.1) do
+           if _G.AutoRandomStand then
+               if hasTargetStand() then
+                   pcall(function() _G.HideStandGui() end)
+                   repeat task.wait(0.1) until not hasTargetStand() or not _G.AutoRandomStand
+               end
+   
+               repeat
+                   if not _G.AutoRandomStand then break end
+   
+                   pcall(function() _G.ShowStandGui() end)
+   
+                   if player.Stand.Value ~= "None" and not hasTargetStand() then
+                       if not hasItem("RokakakaFruit") and isCharacterAlive() then
+                           pcall(function()
+                               logic.giveitem:FireServer("RokakakaFruit")
+                           end)
+                       end
+   
+                       local roka = player.Backpack:FindFirstChild("RokakakaFruit")
+                       if roka and player.Character and player.Character:FindFirstChild("Humanoid") then
+                           pcall(function()
+                               player.Character.Humanoid:EquipTool(roka)
+                               logic.fruitevent:InvokeServer(roka, player.Character, 2)
+                           end)
+                       end
+   
+                       task.wait(0.5)
+                   end
+   
+                   if player.Stand.Value == "None" then
+                       if not hasItem("StandArrow") and isCharacterAlive() then
+                           pcall(function()
+                               logic.giveitem:FireServer("StandArrow")
+                           end)
+                       end
+   
+                       local arrow = player.Backpack:FindFirstChild("StandArrow")
+                       if arrow and player.Character and player.Character:FindFirstChild("Humanoid") then
+                           pcall(function()
+                               player.Character.Humanoid:EquipTool(arrow)
+                           end)
+   
+                         
+                           local equipped = false
+                           for i = 1, 30 do
+                               if player.Character:FindFirstChild("StandArrow") then
+                                   equipped = true
+                                   break
+                               end
+                               task.wait(0.1)
+                           end
+   
+                           if equipped then
+                               pcall(function()
+                                   logic.arrowevent:InvokeServer(arrow, player.Character, 0)
+                               end)
+                           end
+                       end
+                   end
+   
+                   task.wait(0.1)
+               until not _G.AutoRandomStand or hasTargetStand()
+   
+               pcall(function() _G.HideStandGui() end)
+           end
+       end
+   end)
+
+-- GUI Setup for Showing Selected Stands
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SelectedStandsDisplay"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Enabled = false
+
+local Frame = Instance.new("Frame")
+Frame.Name = "StandFrame"
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 300, 0, 300)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -150)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BorderSizePixel = 0
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Frame
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "Selected Stands"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Parent = Frame
+CloseBtn.Size = UDim2.new(0, 25, 0, 25)
+CloseBtn.Position = UDim2.new(1, -30, 0, 5)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.new(1, 0.2, 0.2)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 14
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.MouseButton1Click:Connect(function()
+    ScreenGui.Enabled = false
+end)
+
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Parent = Frame
+Scroll.Position = UDim2.new(0, 10, 0, 40)
+Scroll.Size = UDim2.new(1, -20, 1, -50)
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.BackgroundTransparency = 1
+Scroll.ScrollBarThickness = 6
+Scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+Scroll.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+
+local UIList = Instance.new("UIListLayout", Scroll)
+UIList.Padding = UDim.new(0, 4)
+UIList.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Function to update GUI list
+local function updateStandList()
+    for _, child in pairs(Scroll:GetChildren()) do
+        if child:IsA("TextLabel") then
+            child:Destroy()
+        end
+    end
+
+    for _, stand in ipairs(selectedStands) do
+        local label = Instance.new("TextLabel")
+        label.Parent = Scroll
+        label.Size = UDim2.new(1, 0, 0, 20)
+        label.BackgroundTransparency = 1
+        label.Text = stand
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.Font = Enum.Font.Gotham
+        label.TextSize = 14
+    end
+end
+
+-- ✅ Rayfield Button to open it
+Stand:CreateButton({
+    Name = "Show Selected Stand List",
+    Callback = function()
+        updateStandList()
+        ScreenGui.Enabled = true
+    end,
+})
+
+   
 
 
 
@@ -734,6 +995,19 @@ end
 end
 
 if game.PlaceId == 2295122555 then
+
+    local Toggle = Item:CreateToggle({
+        Name = "Auto Collect Rebirth Diary",
+        CurrentValue = false,
+        Flag = "Item",
+        Callback = function(t)
+     _G.AutoRebirthDiary = t
+     
+    
+      end,
+    })
+
+
 local Toggle = Item:CreateToggle({
     Name = "Auto Collect Dio Diary",
     CurrentValue = false,
@@ -1395,147 +1669,7 @@ local Toggle = Misc:CreateToggle({
 end,
 })
 
-local player = game.Players.LocalPlayer
-local standValue = player:WaitForChild("Stand")
 
--- Create GUI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "StandDisplay"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
-
--- Create TextLabel
-local textLabel = Instance.new("TextLabel")
-textLabel.Name = "StandLabel"
-textLabel.Size = UDim2.new(0, 200, 0, 40)
-textLabel.Position = UDim2.new(0, 10, 0, 10)
-textLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-textLabel.BorderSizePixel = 0
-textLabel.TextColor3 = Color3.new(1, 1, 1)
-textLabel.TextScaled = true
-textLabel.Font = Enum.Font.GothamBold
-textLabel.Text = "Stand: " .. tostring(standValue.Value)
-textLabel.Visible = false
-textLabel.BackgroundTransparency = 1
-textLabel.TextTransparency = 1
-textLabel.Parent = screenGui
-
--- Track value changes
-standValue:GetPropertyChangedSignal("Value"):Connect(function()
-	textLabel.Text = "Stand: " .. tostring(standValue.Value)
-end)
-
-
-_G.ShowStandGui = function()
-	textLabel.Visible = true
-	textLabel.BackgroundTransparency = 0
-	textLabel.TextTransparency = 0
-end
-
-
-_G.HideStandGui = function()
-	textLabel.Visible = false
-	textLabel.BackgroundTransparency = 1
-	textLabel.TextTransparency = 1
-end
-
-
-
-
-
-local player = game.Players.LocalPlayer
-local replicated = game:GetService("ReplicatedStorage")
-local logic = replicated:WaitForChild("Logic")
-
-local function hasTargetStand()
-	local s = player.Stand.Value
-	return s == "WonderOfU" or s == "Tusk1" or s == "Tusk2" or s == "Tusk3" or s == "GoldExperience"
-end
-
-local function hasItem(itemName)
-	-- Check in both Backpack and Character
-	if player.Backpack:FindFirstChild(itemName) then return true end
-	if player.Character and player.Character:FindFirstChild(itemName) then return true end
-	return false
-end
-
-local function isCharacterAlive()
-	-- Check if the character is alive
-	return player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0
-end
-
-spawn(function()
-	while task.wait() do
-		if _G.AutoRandomStand then
-			if hasTargetStand() then
-				pcall(function() _G.HideStandGui() end)
-				repeat task.wait() until player.Stand.Value == "None"
-			end
-
-			repeat
-				pcall(function() _G.ShowStandGui() end)
-
-				if player.Stand.Value ~= "None" and not hasTargetStand() then
-					if not hasItem("RokakakaFruit") and isCharacterAlive() then
-						pcall(function()
-							logic.giveitem:FireServer("RokakakaFruit")
-						end)
-					end
-
-					local roka = player.Backpack:FindFirstChild("RokakakaFruit")
-					if roka and player.Character and player.Character:FindFirstChild("Humanoid") then
-						pcall(function()
-							player.Character.Humanoid:EquipTool(roka)
-							logic.fruitevent:InvokeServer(roka, player.Character, 2)
-						end)
-					end
-
-					-- Wait for 0.5 seconds to allow inventory to load back up after Rokakaka use
-					task.wait(0.5)
-				end
-
-				if player.Stand.Value == "None" then
-					if not hasItem("StandArrow") and isCharacterAlive() then
-						pcall(function()
-							logic.giveitem:FireServer("StandArrow")
-						end)
-					end
-
-					local arrow = player.Backpack:FindFirstChild("StandArrow")
-					if arrow and player.Character and player.Character:FindFirstChild("Humanoid") then
-						pcall(function()
-							player.Character.Humanoid:EquipTool(arrow)
-							logic.arrowevent:InvokeServer(arrow, player.Character, 0)
-						end)
-					end
-				end
-
-				task.wait(0.1)
-			until not _G.AutoRandomStand or hasTargetStand()
-
-			pcall(function() _G.HideStandGui() end)
-		end
-	end
-end)
-
-
-
-
-
-
-
-
-
-local Toggle = Misc:CreateToggle({
-    Name = "Auto Random Stand(Tier 8)",
-    CurrentValue = false,
-    Flag = "Item",
-    Callback = function(t)
- _G.AutoRandomStand = t
- 
-
-end,
-})
 
 
 local Toggle = Misc:CreateToggle({
