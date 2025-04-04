@@ -181,7 +181,7 @@ local vu = game:GetService("VirtualUser")
                             teleportToSafeBase()
                         end
     
-                        wait(0.01)
+                        wait(0.0001)
     
                     until not _G.Enabled
                 end
