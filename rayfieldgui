@@ -10,8 +10,8 @@ iRay  | Programming
 
 
 
-local InterfaceBuild = 'K7GD'
-local Release = "Build 1.54"
+local InterfaceBuild = 'ttaapper1247'
+local Release = "Version 1.0.0"
 local AxisHubFolder = "AxisHub"
 local ConfigurationFolder = AxisHubFolder.."/Configurations"
 local ConfigurationExtension = ".rfld"
@@ -433,7 +433,7 @@ repeat
 
 	if not warned then
 		warn('AxisHub | Build Mismatch')
-		print('AxisHub may encounter issues as you are running an incompatible interface version ('.. ((AxisHub:FindFirstChild('Build') and AxisHub.Build.Value) or 'No Build') ..').\n\nThis version of AxisHub is intended for interface build '..InterfaceBuild..'.')
+		
 		warned = true
 	end
 
@@ -1206,7 +1206,7 @@ function AxisHubLibrary:CreateWindow(Settings)
 	if not correctBuild and not Settings.DisableBuildWarnings then
 		task.delay(3, 
 			function() 
-				AxisHubLibrary:Notify({Title = 'Build Mismatch', Content = 'AxisHub may encounter issues as you are running an incompatible interface version ('.. ((AxisHub:FindFirstChild('Build') and AxisHub.Build.Value) or 'No Build') ..').\n\nThis version of AxisHub is intended for interface build '..InterfaceBuild..'.\n\nTry rejoining and then run the script twice.', Image = 4335487866, Duration = 15})		
+				AxisHubLibrary:Notify({Title = 'Build Mismatch', Content = 'AxisHub may encounter issues as you are running an incompatible interface version ('.. ((AxisHub:FindFirstChild('Build') and AxisHub.Build.Value) or 'No Build') ..').\n\nThis version of AxisHub is intended for interface build '..InterfaceBuild..'.\n\nTry rejoining and then run the script twice.', Image = 4335487866, Duration = 0})		
 			end)
 	end
 
@@ -3487,3 +3487,4 @@ task.delay(4, function()
 end)
 
 return AxisHubLibrary
+
