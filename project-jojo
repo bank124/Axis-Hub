@@ -102,9 +102,9 @@ local vu = game:GetService("VirtualUser")
         local basePart = Instance.new("Part")
         basePart.Size = Vector3.new(10, 1, 10)
         basePart.Position = Vector3.new(
-            math.random(1000, 1200),
-            math.random(1000, 1200),
-            math.random(1000, 1200)
+            math.random(2000, 3000),
+            math.random(2000, 3000),
+            math.random(2000, 3000)
         )
         basePart.Anchored = true
         basePart.Name = "SafeBase"
