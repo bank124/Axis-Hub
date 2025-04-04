@@ -35,7 +35,7 @@ if success and hostStatus then -------------------------------- as you see it ch
 
     if keyMatched then
 
-print("version: 1.0.2")
+print("version: 1.0.4")
 
 
 ---------------------script
@@ -61,24 +61,24 @@ local vu = game:GetService("VirtualUser")
     local player = game.Players.LocalPlayer
     local interactedItems = {}
     
-    local function teleportToTool(specificToolName)
+    local function CollectTool(specificToolName)
         for _, tool in pairs(game:GetService("Workspace"):GetChildren()) do
             if tool:IsA("Tool") and tool.Name == specificToolName then
                 local handle = tool:FindFirstChild("Handle")
                 if handle and handle:IsA("BasePart") then
                     local humanoidRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
                     if humanoidRootPart then
-                        humanoidRootPart.CFrame = handle.CFrame
+                     handle.CFrame = humanoidRootPart.CFrame
                         task.wait(0)
-                        return true -- Found the tool
+                        return true
                     end
                 end
             end
         end
-        return false -- No tool found
+        return false
     end
     
-    local function teleportToAllTools()
+    local function CollectAllTools()
         local humanoidRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         if not humanoidRootPart then
             return false
@@ -89,7 +89,7 @@ local vu = game:GetService("VirtualUser")
             if tool:IsA("Tool") then
                 local handle = tool:FindFirstChild("Handle")
                 if handle and handle:IsA("BasePart") then
-                    humanoidRootPart.CFrame = handle.CFrame
+                   handle.CFrame = humanoidRootPart.CFrame
                     task.wait(0)
                     foundAny = true
                 end
@@ -129,51 +129,51 @@ local vu = game:GetService("VirtualUser")
                         local foundTool = false
     
                         if _G.AutoDioBone then
-                            foundTool = teleportToTool("Dio's Bone") or foundTool
+                            foundTool = CollectTool("Dio's Bone") or foundTool
                         end
                         
                         if _G.AutoRedAja then
-                            foundTool = teleportToTool("RedAja") or foundTool
+                            foundTool = CollectTool("RedAja") or foundTool
                         end
                         
                         if _G.AutoRequiemArrow then
-                            foundTool = teleportToTool("RequiemArrow") or foundTool
+                            foundTool = CollectTool("RequiemArrow") or foundTool
                         end
     
                         if _G.AutoRightEye then
-                            foundTool = teleportToTool("Right Eye") or foundTool
+                            foundTool = CollectTool("Right Eye") or foundTool
                         end
     
                         if _G.AutoRokaka then
-                            foundTool = teleportToTool("RokakakaFruit") or foundTool
+                            foundTool = CollectTool("RokakakaFruit") or foundTool
                         end
     
                         if _G.AutoStoneRokakaka then
-                            foundTool = teleportToTool("StoneRokakakaFruit") or foundTool
+                            foundTool = CollectTool("StoneRokakakaFruit") or foundTool
                         end
     
                         if _G.AutoStandArrow then
-                            foundTool = teleportToTool("StandArrow") or foundTool
+                            foundTool = CollectTool("StandArrow") or foundTool
                         end
     
                         if _G.AutoAjaMask then
-                            foundTool = teleportToTool("AjaMask") or foundTool
+                            foundTool = CollectTool("AjaMask") or foundTool
                         end
     
                         if _G.AutoDioDiary then
-                            foundTool = teleportToTool("Dio's Diary") or foundTool
+                            foundTool = CollectTool("Dio's Diary") or foundTool
                         end
 
                         if _G.AutoSpine then
-                            foundTool = teleportToTool("Spine") or foundTool
+                            foundTool = CollectTool("Spine") or foundTool
                         end
     
                         if _G.AutoVamp then
-                            foundTool = teleportToTool("VampireMask") or foundTool
+                            foundTool = CollectTool("VampireMask") or foundTool
                         end
     
                         if _G.AutoCollectAll then
-                            foundTool = teleportToAllTools() or foundTool
+                            foundTool = CollectAllTools() or foundTool
                         end
     
                        
@@ -181,7 +181,7 @@ local vu = game:GetService("VirtualUser")
                             teleportToSafeBase()
                         end
     
-                        wait(0.0001)
+                        wait(0.00000000000001)
     
                     until not _G.Enabled
                 end
@@ -398,7 +398,7 @@ end)
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
     Name = "Axis Hub X 1XBET : ProJect Jojo",
-    LoadingTitle = "Version: 1.0.2",
+    LoadingTitle = "Version: 1.0.4",
     LoadingSubtitle = "by 1XBET",
     
  })
