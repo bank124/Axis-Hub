@@ -1443,81 +1443,84 @@ end
 
 
 
+local player = game.Players.LocalPlayer
+local replicated = game:GetService("ReplicatedStorage")
+local logic = replicated:WaitForChild("Logic")
+
+local function hasTargetStand()
+	local s = player.Stand.Value
+	return s == "WonderOfU" or s == "Tusk1" or s == "Tusk2" or s == "Tusk3" or s == "GoldExperience"
+end
+
+local function hasItem(itemName)
+	-- Check in both Backpack and Character
+	if player.Backpack:FindFirstChild(itemName) then return true end
+	if player.Character and player.Character:FindFirstChild(itemName) then return true end
+	return false
+end
+
+local function isCharacterAlive()
+	-- Check if the character is alive
+	return player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0
+end
 
 spawn(function()
-    while task.wait() do
-if _G.AutoRandomStand then
-repeat
+	while task.wait() do
+		if _G.AutoRandomStand then
+			if hasTargetStand() then
+				pcall(function() _G.HideStandGui() end)
+				repeat task.wait() until player.Stand.Value == "None"
+			end
 
-    if game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience" then
-        _G.HideStandGui()
-        return
-    else
+			repeat
+				pcall(function() _G.ShowStandGui() end)
 
-        _G.ShowStandGui()
+				if player.Stand.Value ~= "None" and not hasTargetStand() then
+					if not hasItem("RokakakaFruit") and isCharacterAlive() then
+						pcall(function()
+							logic.giveitem:FireServer("RokakakaFruit")
+						end)
+					end
 
- wait(0.5)
+					local roka = player.Backpack:FindFirstChild("RokakakaFruit")
+					if roka and player.Character and player.Character:FindFirstChild("Humanoid") then
+						pcall(function()
+							player.Character.Humanoid:EquipTool(roka)
+							logic.fruitevent:InvokeServer(roka, player.Character, 2)
+						end)
+					end
 
+					-- Wait for 0.5 seconds to allow inventory to load back up after Rokakaka use
+					task.wait(0.5)
+				end
 
-	if not game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") then
-        local args = {
-            [1]="RokakakaFruit",
-            
-            }
-            
-            game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(args))
+				if player.Stand.Value == "None" then
+					if not hasItem("StandArrow") and isCharacterAlive() then
+						pcall(function()
+							logic.giveitem:FireServer("StandArrow")
+						end)
+					end
+
+					local arrow = player.Backpack:FindFirstChild("StandArrow")
+					if arrow and player.Character and player.Character:FindFirstChild("Humanoid") then
+						pcall(function()
+							player.Character.Humanoid:EquipTool(arrow)
+							logic.arrowevent:InvokeServer(arrow, player.Character, 0)
+						end)
+					end
+				end
+
+				task.wait(0.1)
+			until not _G.AutoRandomStand or hasTargetStand()
+
+			pcall(function() _G.HideStandGui() end)
+		end
 	end
-    wait(0.3)
-    if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") then
-        local roka = game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit")
-		wait(.1)
-		game.Players.LocalPlayer.Character.Humanoid:EquipTool(roka)
-	end
-wait(0.1)
-
-    
-
-local args = {
-    [1] = game:GetService("Players").LocalPlayer.Character.RokakakaFruit,
-    [2] = game:GetService("Players").LocalPlayer.Character,
-    [3] = 2
-}
-
-game:GetService("ReplicatedStorage").Logic.fruitevent:InvokeServer(unpack(args))
-
-wait(1.3)
-
-if not game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
-    local yes = {
-        [1]="StandArrow",
-        
-        }
-        
-        game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(yes))
-end
-wait(.3)
-if game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
-    local arrow = game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow")
-	wait(.1)
-	game.Players.LocalPlayer.Character.Humanoid:EquipTool(arrow)
-end
-
-
-
-local args = {
-    [1] = game:GetService("Players").LocalPlayer.Character.StandArrow,
-    [2] = game:GetService("Players").LocalPlayer.Character,
-    [3] = 0
-}
-
-game:GetService("ReplicatedStorage").Logic.arrowevent:InvokeServer(unpack(args))
-wait(1)
-end
-_G.HideStandGui()
-until not _G.AutoRandomStand or game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience"
-end
-end
 end)
+
+
+
+
 
 
 
