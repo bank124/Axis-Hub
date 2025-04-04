@@ -35,7 +35,7 @@ if success and hostStatus then -------------------------------- as you see it ch
 
     if keyMatched then
 
-print("version: 1.0.4")
+print("version: 1.0.5")
 
 
 ---------------------script
@@ -508,7 +508,7 @@ end)
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
     Name = "Axis Hub X 1XBET : ProJect Jojo",
-    LoadingTitle = "Version: 1.0.4",
+    LoadingTitle = "Version: 1.0.5",
     LoadingSubtitle = "by 1XBET",
     
  })
@@ -1433,7 +1433,7 @@ repeat
             
             game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(args))
 	end
-    wait(0.1)
+    wait(0.3)
     if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") then
         local roka = game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit")
 		wait(.1)
@@ -1461,7 +1461,7 @@ if not game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
         
         game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(yes))
 end
-wait(.1)
+wait(.3)
 if game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
     local arrow = game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow")
 	wait(.1)
