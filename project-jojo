@@ -384,17 +384,6 @@ local args = {
 }
 
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 wait(.001)
 until not _G.Dio
 
@@ -418,17 +407,6 @@ until not _G.Dio
                 [6] = workspace.Kira.Humanoid
             }
             
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
             game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
              wait(.001)
             until not _G.Kira
@@ -508,7 +486,7 @@ end)
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
     Name = "Axis Hub X 1XBET : ProJect Jojo",
-    LoadingTitle = "Version: 1.0.4",
+    LoadingTitle = "Version: 1.0.5",
     LoadingSubtitle = "by 1XBET",
     
  })
@@ -787,6 +765,16 @@ end
     Flag = "Item",
     Callback = function(t)
  _G.AutoDioBone = t
+
+end,
+})
+
+local Toggle = Item:CreateToggle({
+    Name = "Auto Collect Vampire Mask",
+    CurrentValue = false,
+    Flag = "Item",
+    Callback = function(t)
+ _G.AutoVamp = t
 
 end,
 })
