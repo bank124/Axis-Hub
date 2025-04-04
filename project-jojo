@@ -35,7 +35,7 @@ if success and hostStatus then -------------------------------- as you see it ch
 
     if keyMatched then
 
-print("version: 1.0.4")
+print("version: 1.0.5")
 
 
 ---------------------script
