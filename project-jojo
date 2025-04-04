@@ -102,9 +102,9 @@ local vu = game:GetService("VirtualUser")
         local basePart = Instance.new("Part")
         basePart.Size = Vector3.new(10, 1, 10)
         basePart.Position = Vector3.new(
-            math.random(2000, 3000),
-            math.random(2000, 3000),
-            math.random(2000, 3000)
+            math.random(5000, 6000),
+            math.random(5000, 6000),
+            math.random(5000, 6000)
         )
         basePart.Anchored = true
         basePart.Name = "SafeBase"
@@ -357,7 +357,7 @@ game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-wait(.00001)
+wait(.00000000000000000000001)
 until not _G.Diavolo
               
                    end
@@ -770,22 +770,21 @@ end,
 
 local players = {}
 
--- Function to update the player list
+
 local function updatePlayers()
-    players = {}  -- Reset the player list
+    players = {} 
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(players, player.Name)
         print("Refreshing...")
     end
 end
 
--- Initialize the player list
+
 updatePlayers()
 
 local targetPlayerName = ""  
 local targetPlayerObject = nil  
 
--- Dropdown for selecting a player
 local Dropdown = Player:CreateDropdown({
     Name = "Select Players",
     Options = players,
