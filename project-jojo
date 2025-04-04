@@ -35,7 +35,7 @@ if success and hostStatus then -------------------------------- as you see it ch
 
     if keyMatched then
 
-print("version: 1.0.5")
+print("version: 1.0.8")
 
 
 ---------------------script
@@ -101,11 +101,7 @@ local vu = game:GetService("VirtualUser")
     local function createSafeBase()
         local basePart = Instance.new("Part")
         basePart.Size = Vector3.new(10, 1, 10)
-        basePart.Position = Vector3.new(
-            math.random(50000, 80000),
-            math.random(50000, 80000),
-            math.random(50000, 80000)
-        )
+        basePart.CFrame = CFrame.new(10000, 50000, 80000)
         basePart.Anchored = true
         basePart.Name = "SafeBase"
         basePart.Parent = workspace
