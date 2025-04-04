@@ -350,6 +350,8 @@ spawn(function()
     while task.wait() do
         pcall(function()
             if _G.NTR then
+                local NTR = workspace:FindFirstChild("Notorious B.I.G")
+                if NTR and NTR:FindFirstChild("Humanoid") then
             repeat
 local args = {
 [1] = 55,
@@ -363,7 +365,7 @@ local args = {
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 wait(.001)
 until not _G.NTR
-
+end
                    end
                    end)
                    end
@@ -377,6 +379,8 @@ spawn(function()
     while task.wait() do
         pcall(function()
             if _G.Dio then
+                local dio = workspace:FindFirstChild("DIO")
+                if dio and dio:FindFirstChild("Humanoid") then
             repeat
 local args = {
 [1] = 55,
@@ -389,8 +393,8 @@ local args = {
 
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 wait(.001)
-until not _G.Dio
-
+until not _G.Dio or not dio
+end
                    end
                    end)
                    end
@@ -401,6 +405,8 @@ until not _G.Dio
                     while task.wait() do
                         pcall(function()
                             if _G.Kira then
+                                local kira = workspace:FindFirstChild("Kira")
+                if kira and kira:FindFirstChild("Humanoid") then
                             repeat
             local args = {
                 [1] = 55,
@@ -413,7 +419,8 @@ until not _G.Dio
             
             game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
              wait(.001)
-            until not _G.Kira
+            until not _G.Kira or not kira
+        end
         
                                    end
                                    end)
@@ -427,6 +434,9 @@ spawn(function()
     while task.wait() do
         pcall(function()
             if _G.Diavolo then
+
+                local diavolo = workspace:FindFirstChild("Diavolo")
+                if diavolo and diavolo:FindFirstChild("Humanoid") then
             repeat
 local args = {
 [1] = 55,
@@ -438,20 +448,9 @@ local args = {
 }
 
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
-wait(.00000000000000000000001)
-until not _G.Diavolo
-              
+wait(.0000001)
+until not _G.Diavolo or not diavolo
+end
                    end
                    end)
                    end
