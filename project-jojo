@@ -248,13 +248,8 @@ local args = {
 
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 wait(.001)
-until not _G.Dio
-if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                   print("Sheesh")
-                 if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                  Print("HinamiTestGhoul")
-                   end
-                   end
+until not _G.NTR
+
                    end
                    end)
                    end
@@ -292,12 +287,7 @@ game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 wait(.001)
 until not _G.Dio
-if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                   print("Sheesh")
-                 if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                  Print("HinamiTestGhoul")
-                   end
-                   end
+
                    end
                    end)
                    end
@@ -332,12 +322,7 @@ if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Pla
             game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
              wait(.001)
             until not _G.Kira
-             if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                                   print("Sheesh")
-                                 if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                                  Print("HinamiTestGhoul")
-                                   end
-                                   end
+        
                                    end
                                    end)
                                    end
@@ -355,7 +340,7 @@ local args = {
 [1] = 55,
 [2] = game:GetService("Players").LocalPlayer.Character["Right Arm"],
 [3] = CFrame.new(0,0,0),
-[4] = 100,
+[4] = 9999999,
 [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
 [6] = workspace.Diavolo.Humanoid
 }
@@ -374,12 +359,7 @@ game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 game:GetService("ReplicatedStorage").Logic.hitbox:InvokeServer(unpack(args))
 wait(.00001)
 until not _G.Diavolo
-if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                   print("Sheesh")
-                 if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") or game.Players.LocalPlayer.Character:FindFirstChild("RokakakaFruit") then
-                  Print("HinamiTestGhoul")
-                   end
-                   end
+              
                    end
                    end)
                    end
@@ -418,7 +398,7 @@ end)
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
     Name = "Axis Hub X 1XBET : ProJect Jojo",
-    LoadingTitle = "Version: 1.0.0",
+    LoadingTitle = "Version: 1.0.1",
     LoadingSubtitle = "by 1XBET",
     
  })
@@ -844,7 +824,7 @@ game.Players.PlayerRemoving:Connect(function()
     end)
 end)
 
--- Button to manually refresh the player list
+
 local Button = Player:CreateButton({
     Name = "Refresh List",
     CurrentValue = false,
@@ -852,7 +832,7 @@ local Button = Player:CreateButton({
     Callback = function()
         updatePlayers()
         pcall(function()
-            Dropdown:Refresh(players)  -- Update dropdown options
+            Dropdown:Refresh(players)  
         end)
         print("Player list refreshed!")
     end,
