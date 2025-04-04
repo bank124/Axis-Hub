@@ -355,7 +355,7 @@ local args = {
 [1] = 55,
 [2] = game:GetService("Players").LocalPlayer.Character["Right Arm"],
 [3] = CFrame.new(0,0,0),
-[4] = 1,
+[4] = 10,
 [5] = game:GetService("Players").LocalPlayer.Character.Torso.voiceline,
 [6] = workspace.Diavolo.Humanoid
 }
