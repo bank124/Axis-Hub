@@ -1407,6 +1407,51 @@ local Toggle = Misc:CreateToggle({
 end,
 })
 
+local player = game.Players.LocalPlayer
+local standValue = player:WaitForChild("Stand")
+
+-- Create GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "StandDisplay"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Create TextLabel
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "StandLabel"
+textLabel.Size = UDim2.new(0, 200, 0, 40)
+textLabel.Position = UDim2.new(0, 10, 0, 10)
+textLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+textLabel.BorderSizePixel = 0
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.GothamBold
+textLabel.Text = "Stand: " .. tostring(standValue.Value)
+textLabel.Visible = false
+textLabel.BackgroundTransparency = 1
+textLabel.TextTransparency = 1
+textLabel.Parent = screenGui
+
+-- Track value changes
+standValue:GetPropertyChangedSignal("Value"):Connect(function()
+	textLabel.Text = "Stand: " .. tostring(standValue.Value)
+end)
+
+
+_G.ShowStandGui = function()
+	textLabel.Visible = true
+	textLabel.BackgroundTransparency = 0
+	textLabel.TextTransparency = 0
+end
+
+
+_G.HideStandGui = function()
+	textLabel.Visible = false
+	textLabel.BackgroundTransparency = 1
+	textLabel.TextTransparency = 1
+end
+
+
 
 
 
@@ -1417,10 +1462,11 @@ if _G.AutoRandomStand then
 repeat
 
     if game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience" then
-      return
+        _G.HideStandGui()
+        return
     else
 
-
+        _G.ShowStandGui()
 
  wait(0.5)
 
@@ -1479,6 +1525,7 @@ local args = {
 game:GetService("ReplicatedStorage").Logic.arrowevent:InvokeServer(unpack(args))
 wait(1.5)
 end
+_G.HideStandGui()
 until not _G.AutoRandomStand or game.Players.LocalPlayer.Stand.Value == "WonderOfU" or game.Players.LocalPlayer.Stand.Value == "Tusk1" or game.Players.LocalPlayer.Stand.Value == "Tusk2" or game.Players.LocalPlayer.Stand.Value == "Tusk3" or game.Players.LocalPlayer.Stand.Value == "GoldExperience"
 end
 end
