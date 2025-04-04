@@ -1433,9 +1433,15 @@ repeat
             
             game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(args))
 	end
-    local roka = game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit")
+    wait(0.1)
+    if game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit") then
+        local roka = game.Players.LocalPlayer.Backpack:FindFirstChild("RokakakaFruit")
 		wait(.1)
 		game.Players.LocalPlayer.Character.Humanoid:EquipTool(roka)
+	end
+wait(0.1)
+
+    
 
 local args = {
     [1] = game:GetService("Players").LocalPlayer.Character.RokakakaFruit,
@@ -1455,10 +1461,13 @@ if not game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
         
         game:GetService("ReplicatedStorage").Logic.giveitem:FireServer(unpack(yes))
 end
-
-local arrow = game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow")
+wait(.1)
+if game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow") then
+    local arrow = game.Players.LocalPlayer.Backpack:FindFirstChild("StandArrow")
 	wait(.1)
 	game.Players.LocalPlayer.Character.Humanoid:EquipTool(arrow)
+end
+
 
 
 local args = {
