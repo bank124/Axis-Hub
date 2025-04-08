@@ -1,0 +1,41 @@
+ spawn(function()
+    while task.wait() do
+        if _G.InstantKill then
+            for _, model in ipairs(workspace.Mobs:GetChildren()) do
+                local humanoid = model:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                end
+            end
+        end
+    end
+end)
+_G.InstantKill = true
+spawn(function()
+    while task.wait() do
+        if _G.InstantKill then
+            for _, model in ipairs(workspace.Mobs:GetChildren()) do
+                local humanoid = model:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                end
+            end
+        end
+    end
+end)
+_G.InstantKill = true
+
+
+spawn(function()
+    while task.wait() do
+        if _G.InstantKill then
+            for _, model in ipairs(workspace.Mobs:GetChildren()) do
+                local humanoid = model:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                end
+            end
+        end
+    end
+end)
+_G.InstantKill = true
