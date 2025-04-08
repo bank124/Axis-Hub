@@ -925,7 +925,7 @@ local function Hide(notify: boolean?)
 	Debounce = true
 	if notify then
 		if useMobilePrompt then 
-			AxisHubLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping 'Show AxisHub'.", Duration = 7, Image = 4400697855})
+			AxisHubLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping 'Show rayfield'.", Duration = 7, Image = 4400697855})
 		else
 			AxisHubLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping K.", Duration = 7, Image = 4400697855})
 		end
@@ -3487,4 +3487,3 @@ task.delay(4, function()
 end)
 
 return AxisHubLibrary
-
