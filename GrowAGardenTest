@@ -3,8 +3,40 @@ getgenv().ESP = false
 
 local player = game.Players.LocalPlayer
 
+
+local function handleESP(plant, hasEffect)
+    local existingESP = plant:FindFirstChild("ESP")
+
+    if getgenv().ESP and hasEffect and not existingESP then
+
+        local BillboardGui = Instance.new("BillboardGui")
+        local TextLabel = Instance.new("TextLabel")
+        BillboardGui.Parent = plant
+        BillboardGui.Name = "ESP"
+        BillboardGui.AlwaysOnTop = true
+        BillboardGui.Size = UDim2.new(0, 200, 0, 50)
+        BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
+        TextLabel.Parent = BillboardGui
+        TextLabel.BackgroundTransparency = 1
+        TextLabel.Size = UDim2.new(0, 200, 0, 50)
+        TextLabel.Font = Enum.Font.GothamBold
+        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextLabel.TextStrokeTransparency = 0
+        TextLabel.TextSize = 15
+        TextLabel.TextWrapped = true
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        local dist = hrp and math.floor((hrp.Position - plant.PrimaryPart.Position).Magnitude) or 0
+        TextLabel.Text = plant.Name .. "\n" .. dist .. " m."
+        print("ESP created for:", plant.Name)
+    elseif (not getgenv().ESP or not hasEffect) and existingESP then
+        existingESP:Destroy()
+        print("ESP removed from:", plant.Name)
+    end
+end
+
+
 spawn(function()
-    while task.wait(1.5) do 
+    while task.wait(2) do
         pcall(function()
             for _, farm in pairs(workspace.Farm:GetDescendants()) do
                 if farm.Name == "Important" then
@@ -22,38 +54,7 @@ spawn(function()
                                         break
                                     end
                                 end
-
-                                local existingESP = v:FindFirstChild("ESP")
-
-                                if getgenv().ESP and hasEffect and not existingESP then
-                                    local BillboardGui = Instance.new("BillboardGui")
-                                    local TextLabel = Instance.new("TextLabel")
-
-                                    BillboardGui.Parent = v
-                                    BillboardGui.Name = "ESP"
-                                    BillboardGui.AlwaysOnTop = true
-                                    BillboardGui.Size = UDim2.new(0, 200, 0, 50)
-                                    BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
-
-                                    TextLabel.Parent = BillboardGui
-                                    TextLabel.BackgroundTransparency = 1
-                                    TextLabel.Size = UDim2.new(0, 200, 0, 50)
-                                    TextLabel.Font = Enum.Font.GothamBold
-                                    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                                    TextLabel.TextStrokeTransparency = 0
-                                    TextLabel.TextSize = 15
-                                    TextLabel.TextWrapped = true
-
-                                    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                                    local dist = hrp and math.floor((hrp.Position - v.PrimaryPart.Position).Magnitude) or 0
-                                    TextLabel.Text = v.Name .. "\n" .. dist .. " m."
-
-                                    print("ESP created for:", v.Name)
-
-                                elseif (not getgenv().ESP or not hasEffect) and existingESP then
-                                    existingESP:Destroy()
-                                    print("ESP removed from:", v.Name)
-                                end
+                                handleESP(v, hasEffect)
                             end
                         end
                     end
@@ -62,6 +63,7 @@ spawn(function()
         end)
     end
 end)
+
 
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
@@ -83,6 +85,7 @@ Main:CreateDropdown({
     end,
 })
 
+
 Main:CreateToggle({
     Name = "ESP Mutation",
     CurrentValue = false,
@@ -92,6 +95,3 @@ Main:CreateToggle({
         print("ESP toggled:", t)
     end,
 })
-
-
-
