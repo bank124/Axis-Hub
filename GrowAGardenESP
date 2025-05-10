@@ -1,14 +1,42 @@
-getgenv().Effect = "Moonlit"
+getgenv().Effect = "Swirls"
 getgenv().ESP = false
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  game.Players.LocalPlayer:Kick("Stop Using Cheat(Warning 1)")
-
 
 local player = game.Players.LocalPlayer
 
+
+local function handleESP(plant, hasEffect)
+    local existingESP = plant:FindFirstChild("ESP")
+
+    if getgenv().ESP and hasEffect and not existingESP then
+
+        local BillboardGui = Instance.new("BillboardGui")
+        local TextLabel = Instance.new("TextLabel")
+        BillboardGui.Parent = plant
+        BillboardGui.Name = "ESP"
+        BillboardGui.AlwaysOnTop = true
+        BillboardGui.Size = UDim2.new(0, 200, 0, 50)
+        BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
+        TextLabel.Parent = BillboardGui
+        TextLabel.BackgroundTransparency = 1
+        TextLabel.Size = UDim2.new(0, 200, 0, 50)
+        TextLabel.Font = Enum.Font.GothamBold
+        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextLabel.TextStrokeTransparency = 0
+        TextLabel.TextSize = 15
+        TextLabel.TextWrapped = true
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        local dist = hrp and math.floor((hrp.Position - plant.PrimaryPart.Position).Magnitude) or 0
+        TextLabel.Text = plant.Name .. "\n" .. dist .. " m."
+        print("ESP created for:", plant.Name)
+    elseif (not getgenv().ESP or not hasEffect) and existingESP then
+        existingESP:Destroy()
+        print("ESP removed from:", plant.Name)
+    end
+end
+
+
 spawn(function()
-    while task.wait(1.5) do 
+    while task.wait(2) do
         pcall(function()
             for _, farm in pairs(workspace.Farm:GetDescendants()) do
                 if farm.Name == "Important" then
@@ -21,43 +49,17 @@ spawn(function()
                             if v:IsA("Model") then
                                 local hasEffect = false
                                 for _, part in pairs(v:GetDescendants()) do
-                                    if part:IsA("BasePart") and part:FindFirstChild(getgenv().Effect .. "Particle") then
-                                        hasEffect = true
-                                        break
+                                    if part:IsA("BasePart") then
+                                        for _, child in pairs(part:GetChildren()) do
+                                            if string.match(child.Name, "^" .. getgenv().Effect) then
+                                                hasEffect = true
+                                                break
+                                            end
+                                        end
                                     end
+                                    if hasEffect then break end
                                 end
-
-                                local existingESP = v:FindFirstChild("ESP")
-
-                                if getgenv().ESP and hasEffect and not existingESP then
-                                    local BillboardGui = Instance.new("BillboardGui")
-                                    local TextLabel = Instance.new("TextLabel")
-
-                                    BillboardGui.Parent = v
-                                    BillboardGui.Name = "ESP"
-                                    BillboardGui.AlwaysOnTop = true
-                                    BillboardGui.Size = UDim2.new(0, 200, 0, 50)
-                                    BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
-
-                                    TextLabel.Parent = BillboardGui
-                                    TextLabel.BackgroundTransparency = 1
-                                    TextLabel.Size = UDim2.new(0, 200, 0, 50)
-                                    TextLabel.Font = Enum.Font.GothamBold
-                                    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                                    TextLabel.TextStrokeTransparency = 0
-                                    TextLabel.TextSize = 15
-                                    TextLabel.TextWrapped = true
-
-                                    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                                    local dist = hrp and math.floor((hrp.Position - v.PrimaryPart.Position).Magnitude) or 0
-                                    TextLabel.Text = v.Name .. "\n" .. dist .. " m."
-
-                                    print("ESP created for:", v.Name)
-
-                                elseif (not getgenv().ESP or not hasEffect) and existingESP then
-                                    existingESP:Destroy()
-                                    print("ESP removed from:", v.Name)
-                                end
+                                handleESP(v, hasEffect)
                             end
                         end
                     end
@@ -67,25 +69,45 @@ spawn(function()
     end
 end)
 
+
+
+
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
     Name = "Axis Hub : Grow A Garden",
     LoadingTitle = "Version: 1.0.0",
     LoadingSubtitle = "by ttaapper1247",
 })
-
 local Main = Window:CreateTab("Main", 4370033185)
 
 Main:CreateDropdown({
     Name = "Select Mutation Name",
-    Options = {"Moonlit", "Wet", "Shocked", "Chilled", "Frozen"},
+    Options = {
+        "Moonlit",
+        "Wet",
+        "Shocked",
+        "Chilled",
+        "Frozen"
+    },
     CurrentOption = "Moonlit",
     Flag = "MutationSelect",
     Callback = function(displayName)
-        getgenv().Effect = typeof(displayName) == "table" and displayName[1] or displayName
+        local name = typeof(displayName) == "table" and displayName[1] or displayName
+
+      
+        local mutationMap = {
+            Moonlit = "Swirls",
+            Wet = "Wet",
+            Shocked = "Shocked",
+            Chilled = "Chilled",
+            Frozen = "Frozen",
+        }
+
+        getgenv().Effect = mutationMap[name]
         print("Mutation changed to:", getgenv().Effect)
     end,
 })
+
 
 Main:CreateToggle({
     Name = "ESP Mutation",
@@ -96,6 +118,3 @@ Main:CreateToggle({
         print("ESP toggled:", t)
     end,
 })
-
-
-
