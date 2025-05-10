@@ -7,7 +7,7 @@ local Effect = getgenv().Effect
 local player = game.Players.LocalPlayer
 
 spawn(function()
-    while task.wait() do
+    while task.wait(1.5) do
         pcall(function()
             for _, farm in pairs(workspace.Farm:GetDescendants()) do
                 if farm.Name == "Important" then
@@ -56,7 +56,7 @@ spawn(function()
                                     TextLabel.Text = v.Name .. "\n" .. dist .. " m."
 
                                     print("ESP created for:", v.Name)
-
+wait(0.1)
                                 elseif not getgenv().ESP and existingESP then
                                     existingESP:Destroy()
                                     print("ESP removed from:", v.Name)
