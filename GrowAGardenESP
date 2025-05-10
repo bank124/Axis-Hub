@@ -1,12 +1,14 @@
+getgenv().Effect = "Moonlit"
+getgenv().ESP = false
 
-local OwnerGarden = getgenv().OwnerGarden
-local Effect = getgenv().Effect
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  game.Players.LocalPlayer:Kick("Stop Using Cheat(Warning 1)")
 
 
 local player = game.Players.LocalPlayer
+
 spawn(function()
-    while task.wait(1.5) do
+    while task.wait(1.5) do 
         pcall(function()
             for _, farm in pairs(workspace.Farm:GetDescendants()) do
                 if farm.Name == "Important" then
@@ -14,49 +16,45 @@ spawn(function()
                     local data = ww and ww:FindFirstChild("Owner")
                     local plant = farm:FindFirstChild("Plants_Physical")
 
-                    if plant and data and data.Value == OwnerGarden then
+                    if plant and data and data.Value == getgenv().OwnerGarden then
                         for _, v in pairs(plant:GetDescendants()) do
                             if v:IsA("Model") then
-                                local hasWetParticle = false
+                                local hasEffect = false
                                 for _, part in pairs(v:GetDescendants()) do
-                                    if part:IsA("BasePart") and part:FindFirstChild(Effect .. "Particle") then
-                                        hasWetParticle = true
+                                    if part:IsA("BasePart") and part:FindFirstChild(getgenv().Effect .. "Particle") then
+                                        hasEffect = true
                                         break
                                     end
                                 end
 
                                 local existingESP = v:FindFirstChild("ESP")
 
-                               
-                                if getgenv().ESP and hasWetParticle and not existingESP then
+                                if getgenv().ESP and hasEffect and not existingESP then
                                     local BillboardGui = Instance.new("BillboardGui")
                                     local TextLabel = Instance.new("TextLabel")
 
                                     BillboardGui.Parent = v
-                                    BillboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-                                    BillboardGui.Active = true
                                     BillboardGui.Name = "ESP"
                                     BillboardGui.AlwaysOnTop = true
-                                    BillboardGui.LightInfluence = 1.000
                                     BillboardGui.Size = UDim2.new(0, 200, 0, 50)
                                     BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
 
                                     TextLabel.Parent = BillboardGui
-                                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                                    TextLabel.BackgroundTransparency = 1.000
+                                    TextLabel.BackgroundTransparency = 1
                                     TextLabel.Size = UDim2.new(0, 200, 0, 50)
                                     TextLabel.Font = Enum.Font.GothamBold
                                     TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                                    TextLabel.TextStrokeTransparency = 0
                                     TextLabel.TextSize = 15
-                                    TextLabel.TextStrokeTransparency = 0.000
                                     TextLabel.TextWrapped = true
 
-                                    local dist = math.floor((player.Character.HumanoidRootPart.Position - v.PrimaryPart.Position).Magnitude)
+                                    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                                    local dist = hrp and math.floor((hrp.Position - v.PrimaryPart.Position).Magnitude) or 0
                                     TextLabel.Text = v.Name .. "\n" .. dist .. " m."
 
                                     print("ESP created for:", v.Name)
-wait(0.1)
-                                elseif not getgenv().ESP and existingESP then
+
+                                elseif (not getgenv().ESP or not hasEffect) and existingESP then
                                     existingESP:Destroy()
                                     print("ESP removed from:", v.Name)
                                 end
@@ -69,26 +67,35 @@ wait(0.1)
     end
 end)
 
-
-
-
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
     Name = "Axis Hub : Grow A Garden",
     LoadingTitle = "Version: 1.0.0",
     LoadingSubtitle = "by ttaapper1247",
-    
- })
+})
 
+local Main = Window:CreateTab("Main", 4370033185)
 
- local Main = Window:CreateTab("Main", 4370033185) 
+Main:CreateDropdown({
+    Name = "Select Mutation Name",
+    Options = {"Moonlit", "Wet", "Shocked", "Chilled", "Frozen"},
+    CurrentOption = "Moonlit",
+    Flag = "MutationSelect",
+    Callback = function(displayName)
+        getgenv().Effect = typeof(displayName) == "table" and displayName[1] or displayName
+        print("Mutation changed to:", getgenv().Effect)
+    end,
+})
 
-
- Main:CreateToggle({
-    Name = "ESP " .. Effect .. " Mutation",
+Main:CreateToggle({
+    Name = "ESP Mutation",
     CurrentValue = false,
     Flag = "ESP",
     Callback = function(t)
         getgenv().ESP = t
+        print("ESP toggled:", t)
     end,
 })
+
+
+
