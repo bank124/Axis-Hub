@@ -5,7 +5,6 @@ local Effect = getgenv().Effect
 
 
 local player = game.Players.LocalPlayer
-
 spawn(function()
     while task.wait(1.5) do
         pcall(function()
