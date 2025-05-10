@@ -1,4 +1,8 @@
 
+local OwnerGarden = getgenv().OwnerGarden
+local Effect = getgenv().Effect
+
+
 
 local player = game.Players.LocalPlayer
 
