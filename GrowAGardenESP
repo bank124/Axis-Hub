@@ -33,7 +33,7 @@ local function handleESP(partToAttach, plantName, hasEffect)
         local dist = hrp and math.floor((hrp.Position - partToAttach.Position).Magnitude) or 0
         TextLabel.Text = plantName
         print("ESP created on", partToAttach:GetFullName(), "with name:", plantName)
-        print(0.2)
+        wait(0.15)
     elseif (not getgenv().ESP or not hasEffect) and existingESP then
         existingESP:Destroy()
         print("ESP removed from:", partToAttach:GetFullName())
