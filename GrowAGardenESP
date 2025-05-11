@@ -32,7 +32,7 @@ local function handleESP(partToAttach, plantName, hasEffect)
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         local dist = hrp and math.floor((hrp.Position - partToAttach.Position).Magnitude) or 0
         TextLabel.Text = plantName
-        print("ESP created on", partToAttach:GetFullName(), "with label:", plantName)
+        print("ESP created on", partToAttach:GetFullName(), "with name:", plantName)
         print(0.2)
     elseif (not getgenv().ESP or not hasEffect) and existingESP then
         existingESP:Destroy()
@@ -86,17 +86,19 @@ local Main = Window:CreateTab("Main", 4370033185)
 local playerList = {}
 local ownerDropdown
 
-local function refreshPlayerList()
+
+local function updatePlayers()
     playerList = {}
-    for _, p in ipairs(game.Players:GetPlayers()) do
-        table.insert(playerList, p.Name)
+    for _, player in pairs(game.Players:GetPlayers()) do
+        table.insert(playerList, player.Name)
+        print("Refreshing...")
     end
     if ownerDropdown then
-        ownerDropdown:SetOptions(playerList)
+        ownerDropdown:Refresh(playerList)
     end
 end
 
-refreshPlayerList()
+updatePlayers()
 
 ownerDropdown = Main:CreateDropdown({
     Name = "Select Garden Owner",
@@ -104,7 +106,14 @@ ownerDropdown = Main:CreateDropdown({
     CurrentOption = "None",
     Flag = "OwnerSelect",
     Callback = function(selectedPlayer)
-        local name = typeof(selectedPlayer) == "table" and selectedPlayer[1] or selectedPlayer
+        local name
+        if typeof(selectedPlayer) == "string" then
+            name = selectedPlayer
+        elseif typeof(selectedPlayer) == "table" and #selectedPlayer > 0 then
+            name = selectedPlayer[1]
+        else
+            name = ""
+        end
 
         if getgenv().OwnerGarden then
             for _, farm in pairs(workspace.Farm:GetDescendants()) do
@@ -131,6 +140,26 @@ ownerDropdown = Main:CreateDropdown({
     end,
 })
 
+Main:CreateButton({
+    Name = "🔄 Refresh Player List",
+    Callback = function()
+        updatePlayers()
+        print("Player list refreshed!")
+        if ownerDropdown and typeof(ownerDropdown.SetOptions) == "function" then
+            local success, err = pcall(function()
+                ownerDropdown:Refresh(playerList)
+            end)
+            if not success then
+                warn("Dropdown refresh failed:", err)
+            end
+        else
+            warn("Dropdown not ready or SetOptions method missing")
+        end
+    end,
+})
+
+
+
 
 Main:CreateDropdown({
     Name = "Select Mutation Name",
@@ -156,6 +185,9 @@ Main:CreateDropdown({
         print("Mutation changed to:", getgenv().Effect)
     end,
 })
+
+
+
 
 Main:CreateToggle({
     Name = "ESP Mutation",
@@ -186,3 +218,4 @@ Main:CreateToggle({
         end
     end,
 })
+
