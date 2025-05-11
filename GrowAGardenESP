@@ -1,21 +1,23 @@
+
 getgenv().Effect = "Swirls"
 getgenv().ESP = false
 
 local player = game.Players.LocalPlayer
 
+local function handleESP(partToAttach, plantName, hasEffect)
+    if not partToAttach or not partToAttach:IsA("BasePart") then return end
 
-local function handleESP(plant, hasEffect)
-    local existingESP = plant:FindFirstChild("ESP")
+    local existingESP = partToAttach:FindFirstChild("ESP")
 
     if getgenv().ESP and hasEffect and not existingESP then
-
         local BillboardGui = Instance.new("BillboardGui")
         local TextLabel = Instance.new("TextLabel")
-        BillboardGui.Parent = plant
+        BillboardGui.Parent = partToAttach
         BillboardGui.Name = "ESP"
         BillboardGui.AlwaysOnTop = true
         BillboardGui.Size = UDim2.new(0, 200, 0, 50)
         BillboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
+
         TextLabel.Parent = BillboardGui
         TextLabel.BackgroundTransparency = 1
         TextLabel.Size = UDim2.new(0, 200, 0, 50)
@@ -24,16 +26,17 @@ local function handleESP(plant, hasEffect)
         TextLabel.TextStrokeTransparency = 0
         TextLabel.TextSize = 15
         TextLabel.TextWrapped = true
+
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-        local dist = hrp and math.floor((hrp.Position - plant.PrimaryPart.Position).Magnitude) or 0
-        TextLabel.Text = plant.Name .. "\n" .. dist .. " m."
-        print("ESP created for:", plant.Name)
+        local dist = hrp and math.floor((hrp.Position - partToAttach.Position).Magnitude) or 0
+        TextLabel.Text = plantName .. "\n" .. dist .. " m."
+        print("ESP created on", partToAttach:GetFullName(), "with label:", plantName)
+
     elseif (not getgenv().ESP or not hasEffect) and existingESP then
         existingESP:Destroy()
-        print("ESP removed from:", plant.Name)
+        print("ESP removed from:", partToAttach:GetFullName())
     end
 end
-
 
 spawn(function()
     while task.wait(2) do
@@ -45,21 +48,21 @@ spawn(function()
                     local plant = farm:FindFirstChild("Plants_Physical")
 
                     if plant and data and data.Value == getgenv().OwnerGarden then
-                        for _, v in pairs(plant:GetDescendants()) do
-                            if v:IsA("Model") then
-                                local hasEffect = false
-                                for _, part in pairs(v:GetDescendants()) do
+                        for _, model in pairs(plant:GetDescendants()) do
+                            if model:IsA("Model") then
+                                local targetPart = nil
+                                for _, part in pairs(model:GetDescendants()) do
                                     if part:IsA("BasePart") then
                                         for _, child in pairs(part:GetChildren()) do
                                             if string.match(child.Name, "^" .. getgenv().Effect) then
-                                                hasEffect = true
+                                                targetPart = part
                                                 break
                                             end
                                         end
                                     end
-                                    if hasEffect then break end
+                                    if targetPart then break end
                                 end
-                                handleESP(v, hasEffect)
+                                handleESP(targetPart, model.Name, targetPart ~= nil)
                             end
                         end
                     end
@@ -68,6 +71,8 @@ spawn(function()
         end)
     end
 end)
+
+
 
 
 
