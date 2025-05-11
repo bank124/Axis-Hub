@@ -1,6 +1,9 @@
+----------------------this is test version it may lag u get it?
+
 
 getgenv().Effect = "Swirls"
 getgenv().ESP = false
+getgenv().OwnerGarden = nil
 
 local player = game.Players.LocalPlayer
 
@@ -8,7 +11,6 @@ local function handleESP(partToAttach, plantName, hasEffect)
     if not partToAttach or not partToAttach:IsA("BasePart") then return end
 
     local existingESP = partToAttach:FindFirstChild("ESP")
-
     if getgenv().ESP and hasEffect and not existingESP then
         local BillboardGui = Instance.new("BillboardGui")
         local TextLabel = Instance.new("TextLabel")
@@ -29,9 +31,9 @@ local function handleESP(partToAttach, plantName, hasEffect)
 
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         local dist = hrp and math.floor((hrp.Position - partToAttach.Position).Magnitude) or 0
-        TextLabel.Text = plantName .. "\n" .. dist .. " m."
+        TextLabel.Text = plantName
         print("ESP created on", partToAttach:GetFullName(), "with label:", plantName)
-
+        print(0.2)
     elseif (not getgenv().ESP or not hasEffect) and existingESP then
         existingESP:Destroy()
         print("ESP removed from:", partToAttach:GetFullName())
@@ -39,43 +41,39 @@ local function handleESP(partToAttach, plantName, hasEffect)
 end
 
 spawn(function()
-    while task.wait(2) do
-        pcall(function()
-            for _, farm in pairs(workspace.Farm:GetDescendants()) do
-                if farm.Name == "Important" then
-                    local ww = farm:FindFirstChild("Data")
-                    local data = ww and ww:FindFirstChild("Owner")
-                    local plant = farm:FindFirstChild("Plants_Physical")
+    while task.wait(1) do
+        if getgenv().ESP then
+            pcall(function()
+                for _, farm in pairs(workspace.Farm:GetDescendants()) do
+                    if farm.Name == "Important" then
+                        local data = farm:FindFirstChild("Data") and farm.Data:FindFirstChild("Owner")
+                        local plant = farm:FindFirstChild("Plants_Physical")
 
-                    if plant and data and data.Value == getgenv().OwnerGarden then
-                        for _, model in pairs(plant:GetDescendants()) do
-                            if model:IsA("Model") then
-                                local targetPart = nil
-                                for _, part in pairs(model:GetDescendants()) do
-                                    if part:IsA("BasePart") then
-                                        for _, child in pairs(part:GetChildren()) do
-                                            if string.match(child.Name, "^" .. getgenv().Effect) then
-                                                targetPart = part
-                                                break
+                        if plant and data and data.Value == getgenv().OwnerGarden then
+                            for _, model in pairs(plant:GetChildren()) do
+                                if model:IsA("Model") then
+                                    local targetPart
+                                    for _, part in pairs(model:GetDescendants()) do
+                                        if part:IsA("BasePart") then
+                                            for _, child in pairs(part:GetChildren()) do
+                                                if string.match(child.Name, "^" .. getgenv().Effect) then
+                                                    targetPart = part
+                                                    break
+                                                end
                                             end
                                         end
+                                        if targetPart then break end
                                     end
-                                    if targetPart then break end
+                                    handleESP(targetPart, model.Name, targetPart ~= nil)
                                 end
-                                handleESP(targetPart, model.Name, targetPart ~= nil)
                             end
                         end
                     end
                 end
-            end
-        end)
+            end)
+        end
     end
 end)
-
-
-
-
-
 
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/main/rayfieldgui"))()
 local Window = Rayfield:CreateWindow({
@@ -84,6 +82,55 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "by ttaapper1247",
 })
 local Main = Window:CreateTab("Main", 4370033185)
+
+local playerList = {}
+local ownerDropdown
+
+local function refreshPlayerList()
+    playerList = {}
+    for _, p in ipairs(game.Players:GetPlayers()) do
+        table.insert(playerList, p.Name)
+    end
+    if ownerDropdown then
+        ownerDropdown:SetOptions(playerList)
+    end
+end
+
+refreshPlayerList()
+
+ownerDropdown = Main:CreateDropdown({
+    Name = "Select Garden Owner",
+    Options = playerList,
+    CurrentOption = "None",
+    Flag = "OwnerSelect",
+    Callback = function(selectedPlayer)
+        local name = typeof(selectedPlayer) == "table" and selectedPlayer[1] or selectedPlayer
+
+        if getgenv().OwnerGarden then
+            for _, farm in pairs(workspace.Farm:GetDescendants()) do
+                if farm.Name == "Important" then
+                    local data = farm:FindFirstChild("Data") and farm.Data:FindFirstChild("Owner")
+                    local plant = farm:FindFirstChild("Plants_Physical")
+                    if data and plant and data.Value == getgenv().OwnerGarden then
+                        for _, model in pairs(plant:GetDescendants()) do
+                            if model:IsA("Model") then
+                                for _, part in pairs(model:GetDescendants()) do
+                                    if part:IsA("BasePart") then
+                                        local esp = part:FindFirstChild("ESP")
+                                        if esp then esp:Destroy() end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        getgenv().OwnerGarden = name
+        print("Garden owner set to:", name)
+    end,
+})
+
 
 Main:CreateDropdown({
     Name = "Select Mutation Name",
@@ -98,8 +145,6 @@ Main:CreateDropdown({
     Flag = "MutationSelect",
     Callback = function(displayName)
         local name = typeof(displayName) == "table" and displayName[1] or displayName
-
-      
         local mutationMap = {
             Moonlit = "Swirls",
             Wet = "Wet",
@@ -107,12 +152,10 @@ Main:CreateDropdown({
             Chilled = "Chilled",
             Frozen = "Frozen",
         }
-
         getgenv().Effect = mutationMap[name]
         print("Mutation changed to:", getgenv().Effect)
     end,
 })
-
 
 Main:CreateToggle({
     Name = "ESP Mutation",
@@ -121,5 +164,25 @@ Main:CreateToggle({
     Callback = function(t)
         getgenv().ESP = t
         print("ESP toggled:", t)
+        if not t then
+            for _, farm in pairs(workspace.Farm:GetDescendants()) do
+                if farm.Name == "Important" then
+                    local data = farm:FindFirstChild("Data") and farm.Data:FindFirstChild("Owner")
+                    local plant = farm:FindFirstChild("Plants_Physical")
+                    if data and plant and data.Value == getgenv().OwnerGarden then
+                        for _, model in pairs(plant:GetDescendants()) do
+                            if model:IsA("Model") then
+                                for _, part in pairs(model:GetDescendants()) do
+                                    if part:IsA("BasePart") then
+                                        local esp = part:FindFirstChild("ESP")
+                                        if esp then esp:Destroy() end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
     end,
 })
