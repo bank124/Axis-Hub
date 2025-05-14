@@ -8,15 +8,15 @@ import os
 
 from datetime import datetime
 
-TOKEN = ""
+TOKEN = "MTM2ODU1MjQ0MjY2MDM5MzAyMg.G8lcrF.p1G_tNR4-1bZEB9jS5eAEqdQdZW4k9gEq246Vg"
 
-CHANNEL_ID = 
+CHANNEL_ID = 1368549684888604766  # Replace with your actual channel ID
 
 intents = discord.Intents.default()
 
 intents.messages = True
 
-intents.message_content = True
+intents.message_content = True  # Required to read messages
 
 client = discord.Client(intents=intents)
 
