@@ -372,30 +372,7 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "by ttaapper1247"
 })
 
-------------------------
--- IDK
-------------------------
-local Rayfield
-for _, v in ipairs(CoreGui:GetDescendants()) do
-    if v.Name == "Rayfield" then
-        Rayfield = v
-        break
-    end
-end
-if Rayfield then
-    print("Rayfield found!")
-    local Prompt = Rayfield:WaitForChild("Prompt", 5) 
-    if Prompt then
-        print("Prompt found!")
-        local Title = Prompt:WaitForChild("Title", 5)
-        if Title then
-            print("Title found!")
-			if Title.Text == "Show Rayfield" then
-				Title.Text = "Gay Femboy"
-			end
-        end
-    end
-end
+
 ------------------------
 -- local of Section
 ------------------------
@@ -540,3 +517,28 @@ spawn(function()
     end
 end)
 
+------------------------
+-- logic of whatever
+------------------------
+
+local Rayfield
+for _, v in ipairs(CoreGui:GetDescendants()) do
+    if v.Name == "Rayfield" then
+        Rayfield = v
+        break
+    end
+end
+if Rayfield then
+    print("Rayfield found!")
+    local Prompt = Rayfield:WaitForChild("Prompt", 5) 
+    if Prompt then
+        print("Prompt found!")
+        local Title = Prompt:WaitForChild("Title", 5)
+        if Title then
+            print("Title found!")
+			if Title.Text == "Show Rayfield" then
+				Title.Text = "Gay Femboy"
+			end
+        end
+    end
+end
