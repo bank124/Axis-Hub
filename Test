@@ -66,7 +66,7 @@ local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local root = char:WaitForChild("HumanoidRootPart")
 local humanoid = char:WaitForChild("Humanoid")
-
+local CoreGui = game:GetService("CoreGui")
 ------------------------
 -- DEBUG FUNCTION
 ------------------------
@@ -96,6 +96,8 @@ end
 
 root.CFrame = targetCFrame
 task.wait(0.5)
+PressE()
+task.wait(0.2)
 PressE()
 task.wait(0.2)
 
@@ -370,6 +372,33 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "by ttaapper1247"
 })
 
+------------------------
+-- IDK
+------------------------
+local Rayfield
+for _, v in ipairs(CoreGui:GetDescendants()) do
+    if v.Name == "Rayfield" then
+        Rayfield = v
+        break
+    end
+end
+if Rayfield then
+    print("Rayfield found!")
+    local Prompt = Rayfield:WaitForChild("Prompt", 5) 
+    if Prompt then
+        print("Prompt found!")
+        local Title = Prompt:WaitForChild("Title", 5)
+        if Title then
+            print("Title found!")
+			if Title.Text == "Show Rayfield" then
+				Title.Text = "Gay Femboy"
+			end
+        end
+    end
+end
+------------------------
+-- local of Section
+------------------------
 local Main = Window:CreateTab("Main", 4370033185)
 local Misc = Window:CreateTab("Misc", 4370033185)
 ------------------------
