@@ -1620,8 +1620,11 @@ function RayfieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Title.TextTransparency = 1
 	LoadingFrame.Subtitle.TextTransparency = 1
 
+local ass = "AxisHub"
+
+
 	if Settings.ShowText then
-		MPrompt.Title.Text = "Show AxisHub"
+		MPrompt.Title.Text = 'Show '..ass
 	end
 
 	LoadingFrame.Version.TextTransparency = 1
@@ -3998,4 +4001,3 @@ end)
 return RayfieldLibrary
 
 
------------AxisHub
