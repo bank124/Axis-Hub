@@ -1,63 +1,513 @@
-import discord
 
-import asyncio
+------------------------
+-- Save Setting
+------------------------
 
-import pyautogui
+if not isfolder("Axis Hub") then
+    makefolder("Axis Hub")
+end
 
-import os
-
-from datetime import datetime
-
-TOKEN = "MTM2ODU1MjQ0MjY2MDM5MzAyMg.G8lcrF.p1G_tNR4-1bZEB9jS5eAEqdQdZW4k9gEq246Vg"
-
-CHANNEL_ID = 1368549684888604766  # Replace with your actual channel ID
-
-intents = discord.Intents.default()
-
-intents.messages = True
-
-intents.message_content = True  # Required to read messages
-
-client = discord.Client(intents=intents)
-
-@client.event
-
-async def on_ready():
-
-print(f"✅ Bot is online as {client.user}")
-
-channel = client.get_channel(CHANNEL_ID)
-
-if channel:
-
-    await channel.send("✅ Bot started and is now online.")
-
-@client.event
-
-async def on_message(message):
-
-if message.author == client.user or message.channel.id != CHANNEL_ID:
-
-    return
+local function saveSetting()
+    local data = {
+        AutoMine = getgenv().AutoMine,
+        AutoSell = getgenv().Sell,
+        SelectedOres = getgenv().SelectedOres,
+        SelectedRocks = getgenv().SelectedRocks,
+        ReduceCPU = getgenv().ReduceCPU
+    }
+    local encodedData = game:GetService('HttpService'):JSONEncode(data)
+    local fn = "Axis Hub/The Forge.json"
+    writefile(fn, encodedData)
+end
 
 
+local function loadSetting()
+    local success, errorMessage = pcall(function()
+local fn = "Axis Hub/The Forge.json"
+        local fileData = readfile(fn)
+        if fileData then
+            local decodedData = game:GetService('HttpService'):JSONDecode(fileData)
+            if decodedData then
+                getgenv().AutoMine = decodedData.AutoMine
+                getgenv().Sell = decodedData.AutoSell
+                getgenv().SelectedOres = decodedData.SelectedOres
+                getgenv().SelectedRocks = decodedData.SelectedRocks
+                getgenv().ReduceCPU = decodedData.ReduceCPU
+            end
+        end
+    end)
 
-if message.content.lower() == "!screenshot":
-
-    filename = f"screenshot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-
-    pyautogui.screenshot(filename)
-
-    await message.channel.send("📸 Screenshot taken!", file=discord.File(filename))
-
-    os.remove(filename)
+    if not success then
+        warn("Failed to load setting: " .. errorMessage)
+    end
+end
 
 
+loadSetting()
 
-elif message.content.lower() == "!shutdown":
 
-    await message.channel.send("🛑 Bot shutting down.")
+------------------------
+-- SETTINGS
+------------------------
+local MineDistance = 7.3                  -- ระยะห่างจากหิน
+local STUDS_PER_SECOND = 115              -- ปรับความเร็ว
+local DEBUG = false                       -- set to true to show debug panel
 
-    await client.close()
+------------------------
+-- SERVICES
+------------------------
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local vim = game:GetService("VirtualInputManager")
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local root = char:WaitForChild("HumanoidRootPart")
+local humanoid = char:WaitForChild("Humanoid")
 
-client.run(TOKEN)
+------------------------
+-- DEBUG FUNCTION
+------------------------
+local function Debug(tag, msg)
+    if DEBUG then
+        warn("[AUTO-MINE]["..tag.."] "..tostring(msg))
+    end
+end
+
+------------------------
+-- SETUP
+------------------------
+local targetCFrame = CFrame.new(
+    -140.06636, 20.7007847, -25.8651428,
+    -0.661202252, 8.31709386e-08, -0.750207663,
+    5.85837618e-08, 1, 5.92305653e-08,
+    0.750207663, -4.78660223e-09, -0.661202252
+)
+
+wait(0.4)
+
+local function PressE()
+    vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.05)
+    vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end
+
+root.CFrame = targetCFrame
+task.wait(0.5)
+PressE()
+task.wait(0.2)
+
+local function Press(key, t)
+    vim:SendKeyEvent(true, key, false, game)
+    task.wait(t or 0.05)
+    vim:SendKeyEvent(false, key, false, game)
+end
+
+task.wait(0.2)
+Press(Enum.KeyCode.Escape, 0.1)
+task.wait(0.3)
+Press(Enum.KeyCode.R, 0.1)
+task.wait(0.3)
+Press(Enum.KeyCode.Return, 0.1)
+
+local vu = game:GetService("VirtualUser")
+player.Idled:Connect(function()
+    vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
+
+------------------------
+-- STATES
+------------------------
+local Tweening = false
+getgenv().IsMining = false
+local SelectedRocks = getgenv().SelectedRocks or {}
+local SelectedOres = getgenv().SelectedOres or {}
+
+
+------------------------
+-- ROCK TYPES
+------------------------
+local function GetAllRockTypes()
+    local Types, Seen = {}, {}
+    local Assets = ReplicatedStorage:FindFirstChild("Assets")
+    local Rocks = Assets and Assets:FindFirstChild("Rocks")
+    if not Rocks then return Types end
+    for _, d in ipairs(Rocks:GetDescendants()) do
+        if d:IsA("Model") and d.Name ~= "" and not d.Name:match("^%d+$") then
+            if not Seen[d.Name] then
+                Seen[d.Name] = true
+                table.insert(Types, d.Name)
+            end
+        end
+    end
+    table.sort(Types)
+    return Types
+end
+
+local function GetRockParts(rockName)
+    local Parts = {}
+    if not rockName then return Parts end
+    local folder = workspace:FindFirstChild("Rocks")
+    if not folder then return Parts end
+    for _, d in ipairs(folder:GetDescendants()) do
+        if d:IsA("BasePart") then
+            local m = d:FindFirstAncestorWhichIsA("Model")
+            if m and m.Name == rockName then
+                table.insert(Parts, d)
+            end
+        end
+    end
+    return Parts
+end
+
+------------------------
+-- ROCK HP
+------------------------
+local function IsRockDepleted(model)
+    for _, d in ipairs(model:GetDescendants()) do
+        if d:IsA("TextLabel") and d.Name == "rockHP" then
+            local hp = tonumber(d.Text:match("%d+"))
+            if hp and hp == 0 then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function GetRockHP(model)
+    for _, d in ipairs(model:GetDescendants()) do
+        if d:IsA("TextLabel") and d.Name == "rockHP" then
+            local num = tonumber(d.Text:match("%d+"))
+            return num or 0
+        end
+    end
+    return 0
+end
+
+------------------------
+-- ROCK AVAILABILITY
+------------------------
+local function IsRockAvailable(model, ignoreBar)
+    if IsRockDepleted(model) then return false end
+
+    local notifGui = player:FindFirstChild("PlayerGui") and player.PlayerGui:FindFirstChild("Notifications")
+    if notifGui then
+        local screen = notifGui:FindFirstChild("Screen")
+        local frame = screen and screen:FindFirstChild("NotificationsFrame")
+        local textFrame = frame and frame:FindFirstChild("TextFrame")
+        local innerTextFrame = textFrame and textFrame:FindFirstChild("TextFrame")
+        local label = innerTextFrame and innerTextFrame:FindFirstChild("TextLabel")
+        if label and label.Text == "Someone else is already mining this rock." then
+            return false
+        end
+    end
+
+    if not ignoreBar then
+        local bar = model:FindFirstChild("infoFrame") 
+                    and model.infoFrame:FindFirstChild("Frame") 
+                    and model.infoFrame.Frame:FindFirstChild("BB") 
+                    and model.infoFrame.Frame.BB:FindFirstChild("Bar")
+        if bar then
+            local x = bar.Size.X.Scale
+            if x < 1 then
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
+------------------------
+-- TARGET SELECT
+------------------------
+local function GetClosestSelectedRock()
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return nil end
+    local closest, closestName
+    local bestDist = math.huge
+    local shinyRockFound = nil
+
+    for _, name in ipairs(SelectedRocks) do
+        for _, part in ipairs(GetRockParts(name)) do
+            if part and part.Parent then
+                local model = part:FindFirstAncestorWhichIsA("Model")
+                if model and IsRockAvailable(model) then
+                    if model:FindFirstChild("Hitbox") and model.Hitbox:FindFirstChild("Shimmering") then
+                        local d = (root.Position - part.Position).Magnitude
+                        Debug("ShinyCheck", "Shiny rock found: "..model.Name.." Dist: "..d)
+                        if not shinyRockFound or d < bestDist then
+                            bestDist = d
+                            shinyRockFound = part
+                            closestName = name
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if shinyRockFound then
+        return shinyRockFound, closestName
+    end
+
+    bestDist = math.huge
+    for _, name in ipairs(SelectedRocks) do
+        for _, part in ipairs(GetRockParts(name)) do
+            if part and part.Parent then
+                local model = part:FindFirstAncestorWhichIsA("Model")
+                if model and IsRockAvailable(model) then
+                    local d = (root.Position - part.Position).Magnitude
+                    Debug("NormalCheck", "Normal rock: "..model.Name.." Dist: "..d)
+                    if d < bestDist then
+                        bestDist = d
+                        closest = part
+                        closestName = name
+                    end
+                end
+            end
+        end
+    end
+    return closest, closestName
+end
+
+------------------------
+-- TWEEN
+------------------------
+local function TweenToRock(part)
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not (root and part and part.Parent) then return false end
+
+    Tweening = true
+    local targetPos = part.Position + Vector3.new(0, -MineDistance, 0)
+    local dist = (root.Position - targetPos).Magnitude
+    local time = dist / STUDS_PER_SECOND
+    time = math.clamp(time, 0.15, 5)
+    Debug("Tween", "Tween start to "..part.Name.." for "..time.." sec")
+
+    local tween = TweenService:Create(root, TweenInfo.new(time, Enum.EasingStyle.Linear), { CFrame = CFrame.new(targetPos, part.Position) })
+    tween:Play()
+    tween.Completed:Wait()
+    Tweening = false
+    Debug("Tween", "Tween complete to "..part.Name)
+    return true
+end
+
+------------------------
+-- MINE ROCK
+------------------------
+local function MineRock(part, rockName)
+    if getgenv().IsMining then return end
+    getgenv().IsMining = true
+    local model = part:FindFirstAncestorWhichIsA("Model")
+    if not (model and model.Name == rockName) then
+        getgenv().IsMining = false
+        return
+    end
+
+    local ToolRemote = ReplicatedStorage.Shared.Packages.Knit.Services.ToolService.RF.ToolActivated
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then
+        getgenv().IsMining = false
+        return
+    end
+
+    local vel = Instance.new("BodyVelocity")
+    vel.MaxForce = Vector3.new(4000, 4000, 4000)
+    vel.Velocity = Vector3.zero
+    vel.Parent = root
+
+    local hb
+    hb = RunService.Heartbeat:Connect(function()
+        if not getgenv().AutoMine or Tweening or not model.Parent or not IsRockAvailable(model, true) then
+            hb:Disconnect()
+            vel:Destroy()
+        else
+            local pos = part.Position + Vector3.new(0, -MineDistance, 0)
+            root.CFrame = CFrame.new(pos, part.Position)
+        end
+    end)
+
+    while getgenv().AutoMine and model.Parent and not Tweening do
+        if not IsRockAvailable(model, true) then
+            Debug("Mine", "Stop mining "..model.Name)
+            break
+        end
+        pcall(function()
+            ToolRemote:InvokeServer("Pickaxe")
+           
+        end)
+        task.wait(0.15)
+    end
+
+    vel:Destroy()
+    getgenv().IsMining = false
+end
+
+------------------------
+-- GET ALL ORES
+------------------------
+local function GetAllOres()
+    local ores = {}
+    for _, v in ipairs(ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Ores"):GetChildren()) do
+        table.insert(ores, v.Name)
+    end
+    table.sort(ores)
+    return ores
+end
+
+------------------------
+-- UI
+------------------------
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/bank124/Axis-Hub/refs/heads/main/Modified-GUI"))()
+local Window = Rayfield:CreateWindow({
+    Name = "Axis Hub : The Forge",
+    LoadingTitle = "Version 1.0.0",
+    LoadingSubtitle = "by ttaapper1247"
+})
+
+local Main = Window:CreateTab("Main", 4370033185)
+local Misc = Window:CreateTab("Misc", 4370033185)
+------------------------
+-- Main
+------------------------
+local Section = Main:CreateSection("Auto Mine")
+Main:CreateDropdown({
+    Name = "Rock Select",
+    Options = GetAllRockTypes(),
+    CurrentOption = getgenv().SelectedRocks or nil,
+    MultipleOptions = true,
+    Callback = function(opts)
+        SelectedRocks = opts
+        getgenv().SelectedRocks = SelectedRocks
+        saveSetting()
+    end
+})
+
+Main:CreateToggle({
+    Name = "Auto Mine",
+    CurrentValue = getgenv().AutoMine,
+    Callback = function(v)
+        getgenv().AutoMine = v
+        saveSetting()
+    end
+})
+
+local Section = Main:CreateSection("Auto Sell")
+
+Main:CreateDropdown({
+    Name = "Ore Select",
+    Options = GetAllOres(),
+    CurrentOption = getgenv().SelectedOres or nil,
+    MultipleOptions = true,
+    Callback = function(v)
+        SelectedOres = v
+        getgenv().SelectedOres = SelectedOres
+        saveSetting()
+    end
+})
+
+Main:CreateToggle({
+    Name = "Auto Sell",
+    CurrentValue = getgenv().Sell,
+    Callback = function(v)
+        getgenv().Sell = v
+        saveSetting()
+    end
+})
+
+------------------------
+-- AUTO MINE LOOP
+------------------------
+task.spawn(function()
+    while task.wait(0.3) do
+        if not getgenv().AutoMine or Tweening or getgenv().IsMining then
+            continue
+        end
+        if #SelectedRocks == 0 then
+            continue
+        end
+        local part, name = GetClosestSelectedRock()
+        if part then
+            TweenToRock(part)
+            MineRock(part, name)
+        end
+    end
+end)
+
+------------------------
+-- AUTO SELL LOOP
+------------------------
+task.spawn(function()
+    local RunCommand = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RF"):WaitForChild("RunCommand")
+
+    while task.wait(0.1) do
+        if not getgenv().Sell or not SelectedOres or #SelectedOres == 0 then
+            continue
+        end
+
+        local Basket = {}
+        for _, oreName in ipairs(SelectedOres) do
+            Basket[oreName] = 1
+        end
+
+        local args = {
+            "SellConfirm",
+            { Basket = Basket }
+        }
+
+        RunCommand:InvokeServer(unpack(args))
+        Debug("AutoSell", "Selling ores: "..table.concat(SelectedOres, ", "))
+    end
+end)
+
+
+
+------------------------
+-- Misc
+------------------------
+local Section = Misc:CreateSection("Misc")
+
+local Toggle = Misc:CreateToggle({
+   Name = "reduce CPU Usage",
+   CurrentValue = getgenv().ReduceCPU,
+   Flag = "Toggle1", 
+   Callback = function(v)
+    getgenv().ReduceCPU = v
+    saveSetting()
+   end,
+})
+
+------------------------
+-- CPU reduce Usage logic
+------------------------
+local lastState = getgenv().ReduceCPU
+
+
+if lastState then
+    game:GetService("RunService"):Set3dRenderingEnabled(false)
+else
+    game:GetService("RunService"):Set3dRenderingEnabled(true)
+end
+
+
+spawn(function()
+    while true do
+        local current = getgenv().ReduceCPU
+        if current ~= lastState then
+          
+            lastState = current
+            if current then
+                game:GetService("RunService"):Set3dRenderingEnabled(false)
+            else
+                game:GetService("RunService"):Set3dRenderingEnabled(true)
+            end
+        end
+        wait(2) 
+    end
+end)
+
