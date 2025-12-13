@@ -1623,9 +1623,9 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 
 
-	if Settings.ShowText then
-		MPrompt.Title.Text = "Show AxisHub Script"
-	end
+	
+		MPrompt.Title.Text = "Press If you Gay"
+	
 
 	LoadingFrame.Version.TextTransparency = 1
 	LoadingFrame.Title.Text = Settings.LoadingTitle or "AxisHub Script"
@@ -4000,3 +4000,5 @@ end)
 
 return RayfieldLibrary
 
+
+Show
