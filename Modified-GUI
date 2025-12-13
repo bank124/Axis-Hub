@@ -3997,7 +3997,7 @@ task.delay(4, function()
 		Main.Notice.Visible = false
 	end
 end)
-MPrompt.Title.Text = "Press If you Gay"
+
 return RayfieldLibrary
 
 
