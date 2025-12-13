@@ -1620,11 +1620,11 @@ function RayfieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Title.TextTransparency = 1
 	LoadingFrame.Subtitle.TextTransparency = 1
 
-local ass = "AxisHub"
+
 
 
 	if Settings.ShowText then
-		MPrompt.Title.Text = 'Show '..ass
+		MPrompt.Title.Text = "Show AxisHub Script"
 	end
 
 	LoadingFrame.Version.TextTransparency = 1
@@ -3999,5 +3999,4 @@ task.delay(4, function()
 end)
 
 return RayfieldLibrary
-
 
