@@ -49,21 +49,23 @@ while True:
         if index_tip.y < index_pip.y:
             cv2.putText(img, "W", (30, 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 3)
-        if not w_pressed:
-            keyboard.press('w')
-            w_pressed = True
-            print("W HOLD")
+            if not w_pressed:
+                keyboard.press('w')
+                w_pressed = True
+                print("W HOLD")
+            elif w_pressed:
+                keyboard.release('w')
+                w_pressed = False
         if index_tip.y > index_pip.y:
             cv2.putText(img, "S", (30, 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 3)
-        if not s_pressed:
-            keyboard.press('s')
-            s_pressed = True
-            print("S HOLD")
-        else:
-            s_pressed = False
-            w_pressed = False
-            print("Nothing")   
+            if not s_pressed:
+                keyboard.press('s')
+                s_pressed = True
+                print("S HOLD")
+            elif s_pressed:
+                keyboard.release('s')
+                s_pressed = False  
         for hand_landmarks in result.multi_hand_landmarks:
             h, w, _ = img.shape
 
