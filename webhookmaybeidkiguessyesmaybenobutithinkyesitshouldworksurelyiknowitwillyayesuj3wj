@@ -1,7 +1,7 @@
 local HttpService = game:GetService("HttpService")
 
 
-local reswRandomChar = getgenv().changes
+local reswRandomChar = getgenv().changes or {}
 
 local webhookImage = {
     ["Cupid's All Seeing Eye"] = {link = "https://raw.githubusercontent.com/AymScripts/random/refs/heads/main/Cupid's_All_Seeing_Eye.webp", prio = 3},
@@ -33,7 +33,6 @@ local function isRare(reswRandomChar)
     return false
 end
 
-local webhookUrl = "https://discord.com/api/webhooks/1436735824736817227/9Kji-zvAgdAm9tFygAQLNAtG1WrXdSOItGhOUExWDYLOofSEbpDL_UnqqkiEuHxeGp9B"
 
 if #reswRandomChar > 0 then
     local username = game.Players.LocalPlayer.Name
@@ -83,8 +82,8 @@ if #reswRandomChar > 0 then
         }
     }
 
-    local webhookUrl = "https://discord.com/api/webhooks/1436735824736817227/9Kji-zvAgdAm9tFygAQLNAtG1WrXdSOItGhOUExWDYLOofSEbpDL_UnqqkiEuHxeGp9B"
-    local serverWebhook = "https://discord.com/api/webhooks/1436735824736817227/9Kji-zvAgdAm9tFygAQLNAtG1WrXdSOItGhOUExWDYLOofSEbpDL_UnqqkiEuHxeGp9B"
+    local webhookUrl = "https://discord.com/api/webhooks/1480849124424421438/8exBkSEOMEXE2jxya_r7nE7DcXynU463_YAmmixwh7irGookpOjUNoKkXqDxbWhoLHun"
+    local serverWebhook = "https://discord.com/api/webhooks/1481668548005855424/oDs5dS-c8bDqnS6_PN-GDt_9ff8dk4qaVvj4q-G8H4M3uKGW3EF7LnzRKRPwqHMkaEf9"
     local headers = {["Content-Type"] = "application/json"}
     local encodedData = HttpService:JSONEncode(webhookMessage)
     local requestFunc = http_request or request or syn and syn.request
